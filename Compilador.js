@@ -5,8 +5,7 @@ Comandos {
     Start = Comentario* Algoritmo Comentario* Definicao? Comentario* Funcao* Demarcacao Funcao* Comentario*
 
     Reservada= "imprima" | Tipo
-    Comentario = "/*" Texto "*/"
-    Texto = any+
+    Comentario = "/*" ( alnum |"\\"" | space | "!" | "@" | "#" | "$" | ":"| "(" | ")" | "|" | "&" | "/")* "*/"
     Digito = digit+
     Nome = ~Reservada letter+ Comentario*
     String = "\\"" Nome "\\""
@@ -48,7 +47,7 @@ início
     imprima(x);
 fim
 
-função fatorial(z: inteiro) : inteiro
+função fatorial(z: inteiro) : inteiro /* tstsadge " &@(&@@) :  */
 início
 
     se z = 1 então
