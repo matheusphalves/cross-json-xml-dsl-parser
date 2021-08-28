@@ -12,6 +12,12 @@ Alunos
 Descrição
 O presente projeto propõe elaborar uma DSL (Domain Specific Language) que seja possível traduzir scripts escritos em Portugual para a linguagem de programação C.
 
+Manual da Linguagem Portugol utilizado (créditos a Gabriel Faustino): https://pt.slideshare.net/GabrielFaustino/manual-de-portugol
+
+Dependências necessárias
+- [Ohm-js](https://www.npmjs.com/package/ohm-js)
+- [fs](https://www.npmjs.com/package/fs)
+
 Etapas envovlidas
 - Definição da gramática
 - Definição do analisador léxico
