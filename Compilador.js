@@ -158,7 +158,6 @@ function executeOperation(){//operação para interpretar comandos inseridos
         Print(imp, pr1, stringOrExp, virgula, otherExp, pr2, pv){
             // Print = "imprima" "("  (String | Expressao)  ("," Expressao)* ")" ";"
             return "\n printf" + pr1.sourceString + stringOrExp.execute() + virgula.sourceString + otherExp.execute() + pr2.sourceString + pv.sourceString + "\n"
-            //VAI SER UM INFERNO
         },
 
         Expressao_Op(exp, op, exp2){
