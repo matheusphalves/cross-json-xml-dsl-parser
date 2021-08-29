@@ -4,7 +4,9 @@ const gramatica = ohm.grammar(`
 Comandos {
     Start = Operacao+
     Operacao = Comentario* Algoritmo Comentario* Definicao? Comentario* Funcao* Demarcacao Funcao* Comentario*
-    Reservada= "imprima" | Tipo
+    Reservada= "imprima" | Tipo | "função" | "retorne" | "algoritmo" | "se" | "então" | "senão"
+                | "fim-se" | "início" | "fim" | "variáveis" | "fim-variáveis"
+                | "para" | "de" | "até" | "passo" | "faça" | "fim-para"
     Comentario = "/*" ( alnum |"\\"" | space | "!" | "@" | "#" | "$" | ":"| "(" | ")" | "|" | "&" | "/")* "*/"
     Digito = digit+
     Nome = ~Reservada letter+ Comentario*
