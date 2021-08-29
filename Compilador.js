@@ -9,14 +9,14 @@ Comandos {
                 | "para" | "de" | "até" | "passo" | "faça" | "fim-para"
     Comentario = "/*" ( alnum |"\\"" | space | "!" | "@" | "#" | "$" | ":"| "(" | ")" | "|" | "&" | "/")* "*/"
     Digito = digit+
-    Nome = ~Reservada letter+ Comentario*
+    Nome = ~Reservada letter (letter | Digito)* Comentario*
     String = "\\"" Nome "\\""
 
     Algoritmo = "algoritmo" Nome ";"
     Definicao = "variáveis" Comentario* Var Comentario* "fim-variáveis"
     Var= Nome ":" Comentario* Tipo  ";"
     VarDefinida = Nome ":" Comentario* Tipo
-    Tipo= ("inteiro" | "real" | "caractere" | "literal" | "lógico" | "matriz["Digito"]") Comentario*
+    Tipo= ("inteiro" | "real" | "caractere" | "literal" | "lógico" | ("matriz""\[" Digito "\]")) Comentario*
     Demarcacao = "início" Comandos* "fim"
     Comandos= Print | Read | If | Atribuicao | Comentario | While | For | Return
     Print = "imprima" "("  (String | Expressao)  ("," Expressao)* ")" ";"
@@ -31,7 +31,7 @@ Comandos {
     While = "enquanto" Expressao "faça" Comandos* "fim-enquanto"
     For = "para" Nome "de" Expressao "até" Expressao ("passo" Digito)? "faça" Comandos* "fim-para"
     DefFuncao = Nome "(" Expressao? ")"
-    Funcao = "função" Nome "(" VarDefinida ("," VarDefinida)* ")" ":" Tipo Demarcacao
+    Funcao = "função" Nome "(" (VarDefinida ("," VarDefinida)*)* ")" ":" Tipo Demarcacao
     Return = "retorne" Expressao ";"
 }
 `);
@@ -50,6 +50,17 @@ início
 fim
 
 função fatorial(z: inteiro) : inteiro /* tstsadge " &@(&@@) :  */
+início
+
+    se z = 1 então
+        retorne 1;
+    senão
+        retorne z * fatorial(z-1);
+    fim-se
+
+fim
+
+função fatorial2() : inteiro /* tstsadge " &@(&@@) :  */
 início
 
     se z = 1 então
