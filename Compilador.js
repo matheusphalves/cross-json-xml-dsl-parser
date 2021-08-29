@@ -70,6 +70,8 @@ if(resultado.succeeded()){
 
 const semantica = gramatica.createSemantics();
 
+var cCode = "#include <stdio.h> \n\n"
+
 function executeOperation(){//operação para interpretar comandos inseridos
     semantica.addOperation('execute',
     {
@@ -79,7 +81,11 @@ function executeOperation(){//operação para interpretar comandos inseridos
         Operacao(com1, algo, com2, def, com3, fun1, demar, fun2, com4){
             //algo.execute();
             //def.execute();
+            algo.execute();
+            def.execute();
             demar.execute();
+            //fun1.execute();
+            //fun2.execute();
         },
 
         Reservada(nome){
@@ -93,44 +99,66 @@ function executeOperation(){//operação para interpretar comandos inseridos
         Digito(_){ return this.primitiveValue},
 
         Nome(letras, com){
-            console.log(letras, com)
+            return letras.sourceString
         },
         
         String(start, nome, end){
-
+            return  start.sourceString + nome.sourceString + end.sourceString
         },
 
         Algoritmo(algoritmo, nome, pv){
-            console.log(algoritmo.sourceString, nome.sourceString, pv.sourceString)
+            cCode += "int main() \n"
+            //console.log(algoritmo.sourceString, nome.sourceString, pv.sourceString)
         },
         Definicao(startVar, com1, var_, com2, endVar){
-            console.log(startVar.sourceString, endVar.sourceString);
-            var_.execute(); //não terminal
+            //console.log(startVar.sourceString, endVar.sourceString);
+            cCode += var_.execute(); //não terminal
         },
 
         Var(nome, twoDots, com, tipo, pv){
             //console.log(nome.sourceString, twoDots.sourceString, tipo.sourceString, pv.sourceString)
-            console.log(tipo.execute()); //não terminal
+            //console.log(tipo.execute()); //não terminal
+            return tipo.execute() + " " + nome.execute() + pv.sourceString
+            
         },
 
         VarDefinida(nome, twoDots, com, tipo){
-
+            nome.execute() + " " + tipo.execute() + "\n"
         },
 
         Tipo(tipo, com){
-            console.log(tipo.sourceString);
+        var tipo = tipo.sourceString
+           if(tipo == "inteiro"){
+               return "int";
+           }
+           else if(tipo ==  "caractere"){
+               return "char";
+           }
+           else if(tipo == "real"){
+               return "double"
+           }
+           else if(tipo == "literal"){
+               //inferno
+           }
+           else if(tipo == "lógico"){
+               //inferno
+           }
         },
 
         Demarcacao(start, comandos, end){
-            comandos.execute();
+            comandos.execute()
+            //comandos.execute();
         },
 
         Comandos(nome){
-            console.log(nome.sourceString);
+            cCode +=  nome.execute()
+            //console.log(nome.sourceString);
         },
 
         Print(imp, pr1, stringOrExp, virgula, otherExp, pr2, pv){
-
+            // Print = "imprima" "("  (String | Expressao)  ("," Expressao)* ")" ";"
+            return "\n printf" + pr1.sourceString + stringOrExp.execute() + virgula.sourceString + otherExp.execute() + pr2.sourceString + pv.sourceString + "\n"
+            //VAI SER UM INFERNO
         },
 
         Expressao_Op(exp, op, exp2){
@@ -138,7 +166,7 @@ function executeOperation(){//operação para interpretar comandos inseridos
         },
 
         Expressao(comand){//Digito DefFuncao, Nome
-
+            return comand.execute()
         },
 
         Operadores(op){
@@ -146,7 +174,7 @@ function executeOperation(){//operação para interpretar comandos inseridos
         },
 
         Read(leia, parentesis, pv){
-
+            return "scanf(" + "\""+ "%d"+"\"" + ")" + pv.sourceString
         },
 
         If(se, exp, entao, comandos, senao, maisComandos, fim){//vulgo inteligencia
@@ -154,7 +182,7 @@ function executeOperation(){//operação para interpretar comandos inseridos
         },
 
         Atribuicao(nome, atrib, expOrCom, pv){
-
+            return nome.execute() + "=" + expOrCom.execute() + pv.sourceString
         },
 
         While(enqt, exp, faca, comds, fim){
@@ -170,7 +198,7 @@ function executeOperation(){//operação para interpretar comandos inseridos
         },
 
         Funcao(fun, nome, pr1, varDef, virgula, varDef2, pr2, twoDots, tipo, demar){
-
+            cCode += tipo.sourceString + " " + nome.sourceString + pr1.sourceString + varDef.execute + " " +demar.execute()
         },
 
 
@@ -189,3 +217,4 @@ function generateCodeOperation(){//operação para gerar txt com arquivo.c
 executeOperation();
 
 console.log(semantica(resultado).execute())
+console.log(cCode)
