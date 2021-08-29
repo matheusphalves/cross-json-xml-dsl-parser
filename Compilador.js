@@ -14,7 +14,7 @@ Comandos {
     Definicao = "variáveis" Comentario* Var Comentario* "fim-variáveis"
     Var= Nome ":" Comentario* Tipo  ";"
     VarDefinida = Nome ":" Comentario* Tipo
-    Tipo= ("inteiro" | "real" | "caractere" | "literal" | "lógico") Comentario*
+    Tipo= ("inteiro" | "real" | "caractere" | "literal" | "lógico" | "matriz["Digito"]") Comentario*
     Demarcacao = "início" Comandos* "fim"
     Comandos= Print | Read | If | Atribuicao | Comentario | While | For | Return
     Print = "imprima" "("  (String | Expressao)  ("," Expressao)* ")" ";"
