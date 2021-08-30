@@ -15,10 +15,6 @@ Comandos {
 
 const inputs = `
 <?xml version="1.0" encoding="UTF-8"?>
-`;
-
-
-/*
 <!--As categorias dos estudantes carregado por meses-->
 <class_list>
    <student>
@@ -26,19 +22,16 @@ const inputs = `
       <grade>A</grade>
    </student>
 </class_list>
-
-*/
-
-//
+`;
 
 const resultado = gramatica.match(inputs);
 
-/*if(resultado.succeeded()){
+if(resultado.succeeded()){
   console.log("Operações OK");
 }else{
   console.log("Erro");
   console.log(resultado.message)
-}*/
+}
 
 const semantica = gramatica.createSemantics();
 
