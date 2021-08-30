@@ -3,12 +3,12 @@ const ohm = require('ohm-js');
 const gramatica = ohm.grammar(`
 Comandos {
     Inicio = Comentario* Cabecalho Comentario* Estrutura* Comentario*
-    Cabecalho = "<?xml version=\\"" Versao "\\" encoding=\\"" Encoding "\\"?>" 
-    Estrutura = "<" Variavel ">" (Estrutura | Informacao)+ "<\/" Variavel ">"
-    Versao = digit+ ("." digit+)*
-    Encoding = letter+ (alnum+ | any)*
-    Informacao = alnum+
-    Variavel = letter+ (alnum)*
+    Cabecalho = "<?xml version=" Versao Encoding? "?>"
+    Estrutura = "<" Variavel ">" (Estrutura | Informacao)+ "</" Variavel ">"
+    Versao = "\\"" digit+ ("." digit+)* "\\""
+    Encoding = "encoding" "=" "\\"" letter+ "-" digit "\\""
+    Informacao = (alnum | ":" | "=" | "\\"" | "/" | "." | "{" | "}" | "-")+
+    Variavel = letter+ (alnum | ":" | "=" | "\\"" | "/" | "." | "_" | "-" | "{" | "}")* 
     Comentario = "<!--" alnum* "-->"
 }
 `);
@@ -35,22 +35,26 @@ if(resultado.succeeded()){
 
 const semantica = gramatica.createSemantics();
 
-//está cagado, consertar gramática
+var json = "";
 function backEnd(){
-    semantica.addOperation('execute', {
+    semantica.addOperation('generateCode', {
         Inicio(com1, cab, com2, est, com3){
-            
+          est.generateCode();
         },
 
-        Cabecalho(start, versao, encod, encodingContent, end){
-        },
+        /*Cabecalho(start, versao, encod, encodingContent, end){
+        },*/
 
 
         Estrutura(start1, variavel, end1, content, start2, variavel2, end2){
-
+            json += "\"" + variavel.sourceString + "\": ";
+            if(content.children.length > 0){
+              json += "{\n\t"
+            }
+            content.generateCode();
         },
 
-        Versao(digito, dot, digito){
+        /*Versao(digito, dot, digito2){
 
         },
 
@@ -58,21 +62,22 @@ function backEnd(){
 
         },
 
-
+*/
         Informacao(info){
-            return info.sourceString;
+            json += "\"" + info.sourceString + "\","
         },
-
+/*
         Variavel(seila){
 
         },
 
         Comentario(){
 
-        }
+        }*/
     }
     )
 }
 
 backEnd();
-console.log(semantica(resultado).execute())
+semantica(resultado).generateCode()
+console.log(json)
