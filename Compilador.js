@@ -78,6 +78,29 @@ function backEnd(){
     )
 }
 
+function compile(){
+  semantica.addOperation('compile', {
+    Inicio(com1, cab, com2, est, com3){
+      est.compile();
+    },
+
+    Estrutura(start1, variavel1, end1, content, start2, variavel2, end2){
+      if(variavel1.sourceString === variavel2.sourceString){
+        if(content.children.length>0)
+          content.compile();
+      }else{
+        throw Error(`Start tag element '${variavel1.sourceString}' don't match with '${variavel2.sourceString}'`)
+      }
+    },
+
+    Informacao(info){
+      return info.sourceString;
+    }
+  })
+}
+
 backEnd();
+//compile();
+//semantica(resultado).compile()
 semantica(resultado).generateCode()
 console.log(json)
