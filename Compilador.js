@@ -1,5 +1,4 @@
 const ohm = require ('ohm-js');
-const fs = require ('fs');
 
 const gramatica = ohm.grammar(`
 Comandos {
@@ -13,6 +12,20 @@ Comandos {
     Comentario = "<!--" alnum* "-->"
 }
 `);
+
+
+const gramatica2 = ohm.grammar(`
+Comandos{
+  Inicio = "{" Conteudo+ "}"
+  Chave = "\\"" letter+ (alnum)* "\\":"
+  String = "\\"" (alnum | "/" | "." | "-")+ "\\""
+  Numero =  digit+ ("." digit+)*
+  Valor =  (Numero | String)+
+  ChaveValor = Chave Valor ","?
+  Objeto = Chave ":{" Conteudo+ "}"
+  Conteudo = (ChaveValor | Objeto)+
+}
+`)
 
 const inputs = `
 <?xml version="1.0"?>
@@ -209,8 +222,16 @@ const inputs = `
 
 `;
 
-const resultado = gramatica.match(inputs);
 
+const inputs2 = `
+{
+  "birilo": 123,
+  "nojeira": "ola",
+}
+`
+
+//const resultado = gramatica.match(inputs);
+const resultado = gramatica2.match(inputs2);
 if(resultado.succeeded()){
   console.log("Operações OK");
 }else{
@@ -271,6 +292,6 @@ function backEnd(){
     )
 }
 
-backEnd();
-semantica(resultado).generateCode()
-console.log(json)
+//backEnd();
+//semantica(resultado).generateCode()
+//console.log(json)
