@@ -205,7 +205,6 @@ const inputs = `
     </profile>
   </profiles>
 </project>
-
 `;
 
 const resultado = gramatica.match(inputs);
@@ -220,47 +219,41 @@ if(resultado.succeeded()){
 const semantica = gramatica.createSemantics();
 
 var json = "{ \n\t";
-var list = [];
-var contTab =1
+//var list = [];
+var contTab = 1
 
 function backEnd(){
     semantica.addOperation('generateCode', {
         Inicio(com1, cab, com2, est, com3){
-          est.generateCode();
-          for(var cont = 0; cont< list.length; cont++){
-            json+= list[cont]
-          }
-          json = json.substring(0, json.length-1)
-          json += "}"
+          json += est.generateCode();
         },
         Estrutura(start1, variavel, end1, content, start2, variavel2, end2){
-            var object = "\"" + variavel.sourceString + "\": ";
+          var object = "";
+          object = "\"" + variavel.sourceString + "\": ";
             if(content.sourceString.substring(0,1) == "<"){
               object += "{\n"
-              contTab++
-              for(var c=0; c<contTab;c++){
-                object += "\t"
+              contTab++;
+              var auxTab = "";
+              for(var c=0; c < contTab; c++){
+                auxTab += "\t"
               }
-              list.push(object);
-              content.generateCode();
-              var aux = list.pop()
-              aux.replace( "", aux.lastIndexOf('\,'));
-              list.push(aux.substring(0, aux.length-1))
-              contTab--
-              var chave = "}\n"
-              for(var c=0; c<contTab;c++){
-                chave += "\t"
-              }
-              list.push(chave)
+              object += auxTab;
+              //list.push(object);
+              object += content.generateCode();
+              contTab--;
+              object += "}\n";
+              
+              return object;
 
             }
             else{
-              var conteudo = content.generateCode();
-              object += conteudo
-              for(var c=0; c<contTab;c++){
+
+              object += content.generateCode();
+              
+              for(var a=0; a < contTab; a++){
                 object += "\t"
               }
-              list.push(object)
+              return object;
             }
         },
         Informacao(info){
