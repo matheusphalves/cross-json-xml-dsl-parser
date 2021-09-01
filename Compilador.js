@@ -21,8 +21,8 @@ Comandos{
   String = "\\"" (alnum | "/" | "." | "-" | "_" | "(" | ")" | "@" | "," | "[" | "]" | "%" | "$" | ":")+ "\\""
   Booleano = "false" | "true"
   Numero =  "-"? digit+ ("." digit+)*
-  Valor =  (Numero | String | Booleano)+
-  Objeto = "{" (ChaveValor | Objeto)+ ("}" | "},")? 
+  Valor =  (Numero | String | Booleano | "null")+
+  Objeto = "{" (ChaveValor | Objeto)+ ("}" | "},")?
   Lista = "[" Valor ("," Valor)* "]" | "[" Objeto ("," Objeto )* "]"
   ChaveValor =  Chave (Valor | Objeto | Lista) ","? 
 }
