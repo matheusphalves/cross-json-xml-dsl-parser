@@ -380,17 +380,21 @@ const inputs4 = `
     {
       "moeda_limite_total": "BRL",
       "valor_limite_total": "26153.7900",
-      "testeLista": ["1", "2", "3"]
+      "testeLista": ["1", "2", "3"],
     },
 
     {
       "moeda_limite_total": "BRL",
       "valor_limite_total": "26153.7900",
     }
-  ]
+  ],
+  "Alimite_maximo_apolice": {
+    "moeda_limite_total": "BRL",
+    "valor_limite_total": "26153.7900",
+  },
 }`
 
-const resultado = gramatica2.match(inputs2);
+const resultado = gramatica2.match(inputs4);
 if(resultado.succeeded()){
   console.log("Operações OK");
 }else{
@@ -464,6 +468,77 @@ function backEnd3(){
   })
 }
 
+rootKeysList = [] 
+function compile(){
+  semantica.addOperation('compile', {
+    Inicio(ac, content, fc){
+      content.compile();
+    },
+
+    Chave(ap, name, name2, fp){
+      return name.sourceString + name2.sourceString
+    },
+
+    Valor(content){//Numero | String | Booleano | "null"
+      return content.compile()
+    },
+
+    String(ap, text, fp){
+      return `"${text.sourceString}"`
+    },
+
+    Booleano(value){
+      return value.sourceString
+    },
+
+    Numero(minus, digit, dot, floatDigit){
+      return `${minus.sourceString? minus.sourceString: ''}${digit.sourceString}${floatDigit.sourceString? `${floatDigit.sourceString}`: ''}`
+    },
+
+    ChaveValor_value(chave, value, pv){//gera par chave-valor
+      const keyName = chave.compile(); //gera código da chave
+      rootKeysList.push(...keyName);
+      value.compile();
+      const aux = new Set(rootKeysList);
+      if(aux.size!=rootKeysList.length){
+        throw Error("JSON keys must be unique.")
+      }
+    },
+
+    
+    ChaveValor_object(chave, object, pv){//gera par chave-valor
+      const keyName = chave.compile(); //gera código da chave
+      rootKeysList.push(...keyName);
+      object.compile();
+      const aux = new Set(rootKeysList);
+      if(aux.size!=rootKeysList.length){
+        throw Error("JSON keys must be unique.")
+      }
+    },
+    
+    Objeto(ac, content, fc){//filhos nao podem ser repetidos
+      let setNames = new Set();
+      let counter = 0;
+
+      content.children.map(item => {
+        setNames.add(item.sourceString);
+        counter++;
+      })
+      if(setNames.size!=counter){
+        throw Error("Object's keys must be unique.")
+      }
+    },
+
+    Lista(key, ac, value, comma, otherValues, fc, comma2){
+      key.compile();
+      value.compile();
+      otherValues.compile();
+    },
+  _terminal(){return this.sourceString;}
+
+  })
+}
+
 function countItems(string){
   console.log(string);
   let count = (string.match(/\t/g) || []).length;
@@ -471,5 +546,7 @@ function countItems(string){
 }
 
 backEnd3();
-console.log(semantica(resultado).generateCode())
-console.log(xml)
+compile();
+console.log(semantica(resultado).compile())
+//console.log(semantica(resultado).generateCode())
+//console.log(xml)
