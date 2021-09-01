@@ -16,14 +16,14 @@ Comandos {
 
 const gramatica2 = ohm.grammar(`
 Comandos{
-  Inicio = "{" Conteudo+ "}"
+  Inicio = "{" (ChaveValor | Objeto)+ "}"
   Chave = "\\"" letter+ (alnum)* "\\":"
   String = "\\"" (alnum | "/" | "." | "-")+ "\\""
-  Numero =  digit+ ("." digit+)*
+  Numero =  "-"? digit+ ("." digit+)*
   Valor =  (Numero | String)+
-  ChaveValor = Chave Valor ","?
-  Objeto = Chave ":{" Conteudo+ "}"
-  Conteudo = (ChaveValor | Objeto)+
+  Objeto = Chave "{" (ChaveValor | Objeto)+ "}" 
+  Lista = "[" Valor ("," Valor)* "]" | "[" Objeto ("," Objeto )* "]"
+  ChaveValor =  Chave (Valor | Lista) ","? 
 }
 `)
 
@@ -225,8 +225,9 @@ const inputs = `
 
 const inputs2 = `
 {
-  "birilo": 123,
-  "nojeira": "ola",
+  "name": "John",
+  "age": 30,
+  "cars": ["Ford", "BMW", "Fiat"]
 }
 `
 
@@ -239,13 +240,13 @@ if(resultado.succeeded()){
   console.log(resultado.message)
 }
 
-const semantica = gramatica.createSemantics();
+const semantica = gramatica2.createSemantics();
 
 var json = "{ \n\t";
 var list = [];
 var contTab =1
 
-function backEnd(){
+function backEnd2(){
     semantica.addOperation('generateCode', {
         Inicio(com1, cab, com2, est, com3){
           est.generateCode();
@@ -292,6 +293,53 @@ function backEnd(){
     )
 }
 
-//backEnd();
-//semantica(resultado).generateCode()
+function backEnd3(){
+  semantica.addOperation('compile', {
+    Inicio(ac, content, fc){ //"{" (ChaveValor | Objeto)+ "}"
+      content.compile();
+    },
+
+    Chave(ap, name, name2, fp){//Chave = "\\"" letter+ (alnum)* "\\":"
+      console.log(name.sourceString)
+    },
+
+    /*String(){
+
+    },
+
+    Numero(){
+      
+    },
+
+    Valor(){
+
+    },
+
+    Objeto(){
+
+    },
+
+    Lista(){
+
+    },*/
+
+    ChaveValor(chave, value, pv){ //ChaveValor =  Chave (Valor | Lista) ","? 
+
+    }
+
+  })
+}
+
+backEnd3();
+console.log(semantica(resultado).compile())
 //console.log(json)
+
+/*Comandos{
+  String = "\\"" (alnum | "/" | "." | "-")+ "\\""
+  Numero =  "-"? digit+ ("." digit+)*
+  Valor =  (Numero | String)+
+  Objeto = Chave "{" (ChaveValor | Objeto)+ "}" 
+  Lista = "[" Valor ("," Valor)* "]" | "[" Objeto ("," Objeto )* "]"
+  ChaveValor =  Chave (Valor | Lista) ","? 
+}
+`*/
