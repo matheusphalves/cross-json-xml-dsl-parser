@@ -16,15 +16,16 @@ Comandos {
 
 const gramatica2 = ohm.grammar(`
 Comandos{
-  Inicio = "{" (ChaveValor | Objeto)+ "}"
-  Chave = "\\"" letter+ (alnum | "_" | "-" | ":")* "\\":"
-  String = "\\"" (alnum | "/" | "." | "-" | "_" | "(" | ")" | "@" | "," | "[" | "]" | "%" | "$" | ":")+ "\\""
-  Booleano = "false" | "true"
-  Numero =  "-"? digit+ ("." digit+)*
-  Valor =  (Numero | String | Booleano | "null")+
-  Objeto = "{" (ChaveValor | Objeto)+ ("}" | "},")?
-  Lista = "[" Valor ("," Valor)* "]" | "[" Objeto ("," Objeto )* "]"
-  ChaveValor =  Chave (Valor | Objeto | Lista) ","? 
+	Inicio = "{" (ChaveValor | Objeto | Lista)+ "}"
+	Chave = "\\"" letter+ (alnum | "_" | "-" | ":")* "\\":"
+	String = "\\"" (alnum | "/" | "." | "-" | "_" | "(" | ")" | "@" | "," | "[" | "]" | ";" | "=" | "'" | "%" | "$" | ":")+ "\\"" ?
+	Booleano = "false" | "true"
+	Numero =  "-"? digit+ ("." digit+)*
+	Valor =  (Numero | String | Booleano | "null")+
+	Objeto = "{" (ChaveValor | Objeto | Lista)+ "}"
+	Lista =  Chave "["  ( Valor ("," Valor)* | Objeto ("," Objeto)*) "]" ","?
+	ChaveValor =  Chave Valor ","? -- value 
+                | Chave? Objeto ","? -- object 
 }
 `)
 
@@ -292,7 +293,7 @@ const inputs3 = `
         "templateProcessorClass": "org.cofax.WysiwygTemplate",
         "templateLoaderClass": "org.cofax.FilesTemplateLoader",
         "templatePath": "templates",
-        "templateOverridePath": "",
+        "templateOverridePath": "null",
         "defaultListTemplate": "listTemplate.htm",
         "defaultFileTemplate": "articleTemplate.htm",
         "useJSP": false,
@@ -367,7 +368,29 @@ const inputs3 = `
     "taglib-uri": "cofax.tld",
     "taglib-location": "/WEB-INF/tlds/cofax.tld"}}}`
 
-const resultado = gramatica2.match(inputs3);
+const inputs4 = `
+{
+  "a": "matheus",
+  "b": "teste",
+  "limite_maximo_apolice": {
+    "moeda_limite_total": "BRL",
+    "valor_limite_total": "26153.7900",
+  },
+  "testando": [
+    {
+      "moeda_limite_total": "BRL",
+      "valor_limite_total": "26153.7900",
+      "testeLista": ["1", "2", "3"]
+    },
+
+    {
+      "moeda_limite_total": "BRL",
+      "valor_limite_total": "26153.7900",
+    }
+  ]
+}`
+
+const resultado = gramatica2.match(inputs2);
 if(resultado.succeeded()){
   console.log("Operações OK");
 }else{
@@ -377,57 +400,76 @@ if(resultado.succeeded()){
 
 const semantica = gramatica2.createSemantics();
 
-var json = "{ \n\t";
+var xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
 var list = [];
 var contTab =1
 
 function backEnd3(){
-  semantica.addOperation('compile', {
-    Inicio(ac, content, fc){ //"{" (ChaveValor | Objeto)+ "}"
-      content.compile();
+  semantica.addOperation('generateCode', {
+    Inicio(ac, content, fc){
+      xml+= content.generateCode();
     },
 
-    Chave(ap, name, name2, fp){//Chave = "\\"" letter+ (alnum)* "\\":"
-      console.log(name.sourceString)
+    Chave(ap, name, name2, fp){
+      return name.sourceString + name2.sourceString
     },
 
-    /*String(){
-
+    Valor(content){//Numero | String | Booleano | "null"
+      return content.generateCode()
     },
 
-    Numero(){
-      
+    String(ap, text, fp){
+      return `"${text.sourceString}"`
     },
 
-    Valor(){
-
+    Booleano(value){
+      return value.sourceString
     },
 
-    Objeto(){
-
+    Numero(minus, digit, dot, floatDigit){
+      return `${minus.sourceString? minus.sourceString: ''}${digit.sourceString}${floatDigit.sourceString? `${floatDigit.sourceString}`: ''}`
     },
 
-    Lista(){
+    ChaveValor_value(chave, value, pv){//gera par chave-valor
+      const keyName = chave.generateCode(); //gera código da chave
+      keyValue = `\t<${keyName}>${value.generateCode()}</${keyName}>\n`
+      return keyValue.replace(",", " ")
+    },
 
-    },*/
+    
+    ChaveValor_object(chave, object, pv){//gera par chave-valor
+      const keyName = chave.generateCode(); //gera código da chave
+      keyValue = `\t<${keyName}>${object.generateCode()} </${keyName}>\n`
+      return keyValue
+    },
+    
+    Objeto(ac, content, fc){
+      items = "\n"
+      content.children.map(item => {
+        items += "\t" + item.generateCode() + "\t\t"
+      })
+      return items
+    },
 
-    ChaveValor(chave, value, pv){ //ChaveValor =  Chave (Valor | Lista) ","? 
-
-    }
+    Lista(key, ac, value, comma, otherValues, fc, comma2){
+      key = key.generateCode();
+      items = `<${key}>${value.generateCode()}</${key}>\n`
+      if(otherValues.children.length> 0){
+        otherValues.children.map(item => items+= `<${key}>${item.generateCode()}</${key}>\n`)
+      }
+      return items
+    },
+  _terminal(){return this.sourceString;}
 
   })
 }
 
-backEnd3();
-console.log(semantica(resultado).compile())
-//console.log(json)
-
-/*Comandos{
-  String = "\\"" (alnum | "/" | "." | "-")+ "\\""
-  Numero =  "-"? digit+ ("." digit+)*
-  Valor =  (Numero | String)+
-  Objeto = Chave "{" (ChaveValor | Objeto)+ "}" 
-  Lista = "[" Valor ("," Valor)* "]" | "[" Objeto ("," Objeto )* "]"
-  ChaveValor =  Chave (Valor | Lista) ","? 
+function countItems(string){
+  console.log(string);
+  let count = (string.match(/\t/g) || []).length;
+  return count;
 }
-`*/
+
+backEnd3();
+console.log(semantica(resultado).generateCode())
+console.log(xml)
