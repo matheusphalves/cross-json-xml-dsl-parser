@@ -15,9 +15,7 @@ Comandos {
 
 const inputs = `
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+<modelVersion>4.0.0</modelVersion>
   <groupId>com.di2win.elis.emission</groupId>
   <artifactId>elis-emission</artifactId>
   <version>1.0.0-SNAPSHOT</version>
@@ -204,15 +202,14 @@ const inputs = `
       </properties>
     </profile>
   </profiles>
-</project>
 
 `;
 
 const resultado = gramatica.match(inputs);
 
-if(resultado.succeeded()){
+if (resultado.succeeded()) {
   console.log("Operações OK");
-}else{
+} else {
   console.log("Erro");
   console.log(resultado.message)
 }
@@ -221,71 +218,101 @@ const semantica = gramatica.createSemantics();
 
 var json = "{ \n\t";
 var list = [];
-var contTab =1
+var contTab = 1
 
-function backEnd(){
-    semantica.addOperation('generateCode', {
-        Inicio(com1, cab, com2, est, com3){
-          est.generateCode();
-          for(var cont = 0; cont< list.length; cont++){
-            json+= list[cont]
-          }
-          json = json.substring(0, json.length-1)
-          json += "}"
-        },
-        Estrutura(start1, variavel, end1, content, start2, variavel2, end2){
-            var object = "\"" + variavel.sourceString + "\": ";
-            if(content.sourceString.substring(0,1) == "<"){
-              object += "{\n"
-              contTab++
-              for(var c=0; c<contTab;c++){
-                object += "\t"
-              }
-              list.push(object);
-              content.generateCode();
-              var aux = list.pop()
-              aux.replace( "", aux.lastIndexOf('\,'));
-              list.push(aux.substring(0, aux.length-1))
-              contTab--
-              var chave = "}\n"
-              for(var c=0; c<contTab;c++){
-                chave += "\t"
-              }
-              list.push(chave)
-
-            }
-            else{
-              var conteudo = content.generateCode();
-              object += conteudo
-              for(var c=0; c<contTab;c++){
-                object += "\t"
-              }
-              list.push(object)
-            }
-        },
-        Informacao(info){
-            return "\"" + info.sourceString + "\",\n"
+function backEnd() {
+  semantica.addOperation('generateCode', {
+    Inicio(com1, cab, com2, est, com3) {
+      est.generateCode();
+      for (var cont = 0; cont < list.length; cont++) {
+        json += list[cont]
+      }
+      json = json.substring(0, json.length - 1)
+      json += "}"
+    },
+    Estrutura(start1, variavel, end1, content, start2, variavel2, end2) {
+      if (list.length != 0) {
+        var auxVirgula = list.pop()
+        if (auxVirgula.substring(0,1)=="}") {
+          list.push(auxVirgula.substring(0,1)+ ","+ auxVirgula.substring(1,auxVirgula.length))
+        }else{
+          list.push(auxVirgula)
         }
+        
+      }
+      var object = "\"" + variavel.sourceString + "\": ";
+      if (content.sourceString.substring(0, 1) == "<") {
+        //if(content.sourceString.substring(1, content.sourceString.indexOf(">"))==variavel.sourceString){
+        /*if (content.sourceString.includes(variavel.sourceString)) {
+          object += "[\n"
+          contTab++
+          for (var c = 0; c < contTab; c++) {
+            object += "\t"
+          }
+          list.push(object);
+          content.generateCode();
+          var aux = list.pop()
+          list.push(aux.replace(",", " ").substring(0, aux.length - 1))
+          contTab--
+          var chave = "]\n"
+          for (var c = 0; c < contTab; c++) {
+            chave += "\t"
+          }
+          list.push(chave)
+        }
+        else {*/
+          object += "{\n"
+          contTab++
+          for (var c = 0; c < contTab; c++) {
+            object += "\t"
+          }
+          list.push(object);
+          content.generateCode();
+          var aux = list.pop()
+          list.push(aux.replace(",", " ").substring(0, aux.length - 1))
+          contTab--
+          var chave = "}\n"
+          for (var c = 0; c < contTab; c++) {
+            chave += "\t"
+          }
+          list.push(chave)
+        //}
+        //}
+
+
+      }
+      else {
+        var conteudo = content.generateCode();
+        object += conteudo
+        for (var c = 0; c < contTab; c++) {
+          object += "\t"
+        }
+        list.push(object)
+      }
+    },
+    Informacao(info) {
+      return "\"" + info.sourceString + "\",\n"
     }
-    )
+  }
+  )
 }
 
-function compile(){
+function compile() {
   semantica.addOperation('compile', {
-    Inicio(com1, cab, com2, est, com3){
+    Inicio(com1, cab, com2, est, com3) {
       est.compile();
     },
 
-    Estrutura(start1, variavel1, end1, content, start2, variavel2, end2){
-      if(variavel1.sourceString === variavel2.sourceString){
-        if(content.children.length>0)
+    Estrutura(start1, variavel1, end1, content, start2, variavel2, end2) {
+      if (variavel1.sourceString === variavel2.sourceString) {
+        if (content.children.length > 0)
           content.compile();
-      }else{
+      } else {
         throw Error(`Start tag element '${variavel1.sourceString}' don't match with '${variavel2.sourceString}'`)
       }
     },
 
-    Informacao(info){
+    Informacao(info) {
       return info.sourceString;
     }
   })
