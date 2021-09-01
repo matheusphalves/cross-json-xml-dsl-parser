@@ -17,11 +17,12 @@ Comandos {
 const gramatica2 = ohm.grammar(`
 Comandos{
   Inicio = "{" (ChaveValor | Objeto)+ "}"
-  Chave = "\\"" letter+ (alnum)* "\\":"
-  String = "\\"" (alnum | "/" | "." | "-")+ "\\""
+  Chave = "\\"" letter+ (alnum | "_")* "\\":"
+  String = "\\"" (alnum | "/" | "." | "-" | ":")+ "\\""
+  Booleano = "false" | "true"
   Numero =  "-"? digit+ ("." digit+)*
-  Valor =  (Numero | String)+
-  Objeto = Chave "{" (ChaveValor | Objeto)+ "}" 
+  Valor =  (Numero | String | Booleano)+
+  Objeto = Chave "{" (ChaveValor | Objeto)+ "}" ","? 
   Lista = "[" Valor ("," Valor)* "]" | "[" Objeto ("," Objeto )* "]"
   ChaveValor =  Chave (Valor | Lista) ","? 
 }
@@ -225,13 +226,254 @@ const inputs = `
 
 const inputs2 = `
 {
-  "name": "John",
-  "age": 30,
-  "cars": ["Ford", "BMW", "Fiat"]
+  "numero_proposta_seguradora": "10002021077500002379",
+  "id_proposta_origem": "d74a328f-c801-49c5-a5a1-1fff0c605ac5",
+  "sistema_origem": "1000",
+  "codigo_grupo_susep_principal": "07",
+  "codigo_ramo_susep_principal": "75",
+  "tipo_apolice": "PROPRIA",
+  "limite_maximo_apolice": {
+      "moeda_limite_total": "BRL",
+      "valor_limite_total": "26153.7900"
+  },
+  "codigos_condicoes_gerais": ["05690-CG-000700750001001-0015-001"],
+  "datas": {
+      "inicio_vigencia": "2021-06-09T00:00:00Z",
+      "fim_vigencia": "2024-06-08T00:00:00Z",
+      "registro_origem": "2021-06-09T18:27:57Z",
+      "assinatura": "2021-06-09T18:28:03Z",
+      "protocolo_origem": "2021-06-09T18:28:25Z",
+      "conclusao_subscricao": "2021-06-09T18:28:09Z"
+  },
+  "id_subscritor_origem": "10336",
+  "resultado_subscricao": "APROVADA",
+  "emissao_condicionada_pagamento": false,
+  "partes": [{
+          "papel_parte": "CORRETOR",
+          "tipo_parte": "INTERMEDIARIO",
+          "id_pessoa": "string",
+          "id_pessoa_origem": "96077aa9-f69b-4608-99ce-fe99837d50dc",
+          "tipo_pessoa": "JURIDICA",
+          "pais_nacionalidade": "BRA",
+          "exposicao_politica": "PRIVADA",
+          "nome_pessoa": "SWZ CORPORATE SOLUCOES E CORRETAGEM DE SEGUROS SA",
+          "data_nascimento_fundacao": "2021-06-09T18:28:25Z",
+          "documentos_identificacao": [{
+                  "pais_identificacao": "BRA",
+                  "tipo_identificacao": "CNPJ",
+                  "valor_identificacao": "22656482000112"
+              }, {
+                  "pais_identificacao": "BRA",
+                  "tipo_identificacao": "CODIGO_CORRETOR_SUSEP",
+                  "valor_identificacao": "202020845"
+              }
+          ],
+          "enderecos": [{
+                  "tipo_endereco": "COMERCIAL",
+                  "pais": "BRA",
+                  "estado": "DF",
+                  "cidade": "Brasilia",
+                  "cep": "70712904",
+                  "rua": "Q SCN QUADRA 2 BLOCO D ENTRADA B",
+                  "numero": "SN",
+                  "bairro": "ASA NORTE",
+                  "complemento": "SALA 1301 ANDAR 13 EDIF LIBERTY MALL"
+              }
+          ],
+          "informacao_contato": [{
+                  "tipo_contato": "TELEFONE",
+                  "valor_contato": "(61)3426-9627"
+              }, {
+                  "tipo_contato": "EMAIL",
+                  "valor_contato": "carlos@wizsolucoes.com.br"
+              }
+          ]
+      }, {
+          "papel_parte": "TOMADOR",
+          "tipo_parte": "CONTRATANTE",
+          "id_pessoa": "string",
+          "id_pessoa_origem": "bf5386f1-240b-4d49-939c-81513fbed548",
+          "tipo_pessoa": "JURIDICA",
+          "pais_nacionalidade": "BRA",
+          "exposicao_politica": "PUBLICA",
+          "nome_pessoa": "GAEL-TELEMATICA SERVICOS E COMERCIO LTDA.",
+          "data_nascimento_fundacao": "2021-06-09T18:28:25Z",
+          "documentos_identificacao": [{
+                  "pais_identificacao": "BRA",
+                  "tipo_identificacao": "CNPJ",
+                  "valor_identificacao": "54163433000115"
+              }
+          ],
+          "enderecos": [{
+                  "tipo_endereco": "COMERCIAL",
+                  "pais": "BRA",
+                  "estado": "SP",
+                  "cidade": "São Paulo",
+                  "cep": "02714000",
+                  "rua": "R MIGUEL CASAGRANDE",
+                  "numero": "200",
+                  "bairro": "FREGUESIA DO O",
+                  "complemento": "BLOCO D"
+              }
+          ],
+          "informacao_contato": [{
+                  "tipo_contato": "TELEFONE",
+                  "valor_contato": "(11) 9999-9999"
+              }, {
+                  "tipo_contato": "EMAIL",
+                  "valor_contato": "emailnaoencontrado@email.com.br"
+              }
+          ]
+      }, {
+          "papel_parte": "SEGURADO",
+          "tipo_parte": "BENEFICIARIO",
+          "id_pessoa": "string",
+          "id_pessoa_origem": "019838e0-bc0a-462c-bb14-e2a991a05cb2",
+          "tipo_pessoa": "NATURAL",
+          "pais_nacionalidade": "BRA",
+          "exposicao_politica": "NAO_EXPOSTA",
+          "nome_pessoa": "FRANCISCO SOUZA DA FREITAS",
+          "data_nascimento_fundacao": "2021-06-09T18:28:25Z",
+          "documentos_identificacao": [{
+                  "pais_identificacao": "BRA",
+                  "tipo_identificacao": "CPF",
+                  "valor_identificacao": "25188225032"
+              }
+          ],
+          "enderecos": [{
+                  "tipo_endereco": "COMERCIAL",
+                  "pais": "BRA",
+                  "estado": "RS",
+                  "cidade": "Gravatai",
+                  "cep": "94198200",
+                  "rua": "Rua Paraguassu",
+                  "numero": "308",
+                  "bairro": "Sagrada Família",
+                  "complemento": "Não informado"
+              }
+          ],
+          "informacao_contato": [{
+                  "tipo_contato": "TELEFONE",
+                  "valor_contato": "985484039"
+              }, {
+                  "tipo_contato": "EMAIL",
+                  "valor_contato": "emailNaoEncontrado@onpoint.com.br"
+              }
+          ]
+      }
+  ],
+  "itens": [{
+          "numero_item": 1,
+          "id_item_origem": "1fb38ec7-099e-4a7e-beb0-80e70d8ced9a",
+          "codigo_tipo_objeto": "000700750015001",
+          "descricao_tipo_objeto": "Execução trabalhista",
+          "classe_risco_item": "BB",
+          "detalhes_objeto": [{
+                  "tipo_detalhe_objeto": "DESCRICAO_OBJETO",
+                  "valor_detalhe_objeto": "Garantir ao Segurado as obrigações do Tomador, nos autos do Processo n.º 00202668920165040202, em trâmite perante a/o\n[TAG_VARA_JUIZO]. \n\nAUTOR: [TAG_AUTOR] \n\nA garantia expressa nessa apólice, abrange o montante original do débito executado, com os encargos e os acréscimos legais, inclusive honorários advocatícios, assistenciais e periciais, devidamente atualizado pelos índices legais aplicáveis aos débitos trabalhistas na data da realização do depósito, acrescido de, no mínimo, 30%.\n\nA presente apólice é emitida de acordo com Ato Conjunto TST.CSJT.CGJT nº 1, de 16 de outubro de 2019."
+              }, {
+                  "tipo_detalhe_objeto": "NUMERO_CONTRATO",
+                  "valor_detalhe_objeto": "00202668920165040202"
+              }, {
+                  "tipo_detalhe_objeto": "NUMERO_CONTRATO",
+                  "valor_detalhe_objeto": "00202668920165040202"
+              }, {
+                  "tipo_detalhe_objeto": "INICIO_VIGENCIA_CONTRATO",
+                  "valor_detalhe_objeto": "6/9/2021 12:00:00 AM"
+              }, {
+                  "tipo_detalhe_objeto": "FIM_VIGENCIA_CONTRATO",
+                  "valor_detalhe_objeto": "6/8/2024 12:00:00 AM"
+              }, {
+                  "tipo_detalhe_objeto": "MOEDA_VALOR_OBJETO",
+                  "valor_detalhe_objeto": "BRL"
+              }, {
+                  "tipo_detalhe_objeto": "VALOR_OBJETO",
+                  "valor_detalhe_objeto": "26153.79000"
+              }
+          ],
+          "coberturas": [{
+                  "codigo_cobertura": "0007007500150029001",
+                  "codigo_cobertura_origem": "dc742953-24e2-435f-8a99-a985be79caca",
+                  "codigo_grupo_susep": "07",
+                  "codigo_ramo_susep": "75",
+                  "nome_cobertura": "Execução trabalhista",
+                  "numero_processo_susep": "15414.900374/2014-46",
+                  "datas": {
+                      "inicio_vigencia_cobertura": "2021-06-09T00:00:00Z",
+                      "fim_vigencia_cobertura": "2024-06-08T00:00:00Z"
+                  },
+                  "codigos_condicoes_especiais": ["05690-CE-000700750001001-0015-0029-001"],
+                  "abrangencia_geografica": "abrangencia_geografica",
+                  "limites": [{
+                          "tipo_limite_cobertura": "APOLICE",
+                          "moeda_limite_cobertura": "BRL",
+                          "valor_limite_cobertura": "26153.7900",
+                          "tipo_obrigacao": "FAZER"
+                      }
+                  ],
+                  "composicao_premio_cobertura": [{
+                          "natureza_premio": "PREMIO",
+                          "tipo_premio": "DIRETO",
+                          "moeda_premio": "BRL",
+                          "valor_premio": "433.5000",
+                          "id_pessoa_origem": "bf5386f1-240b-4d49-939c-81513fbed548"
+                      }, {
+                          "natureza_premio": "IMPOSTO",
+                          "tipo_premio": "IOF",
+                          "moeda_premio": "BRL",
+                          "valor_premio": "0.0000",
+                          "id_pessoa_origem": "bf5386f1-240b-4d49-939c-81513fbed548"
+                      }, {
+                          "natureza_premio": "INTERMEDIACAO",
+                          "tipo_premio": "COMISSAO_CORRETAGEM",
+                          "moeda_premio": "BRL",
+                          "valor_premio": "76.5000",
+                          "id_pessoa_origem": "96077aa9-f69b-4608-99ce-fe99837d50dc"
+                      }
+                  ]
+              }
+          ]
+      }
+  ],
+  "pagamento": {
+      "parcelas": [{
+              "numero_parcela": 1,
+              "id_parcela": "4067",
+              "id_parcela_origem": "4067",
+              "id_parcela_auxiliar": "4067",
+              "data_vencimento": "2021-06-16T18:28:19Z",
+              "composicao_premio_parcela": [{
+                      "natureza_premio": "PREMIO",
+                      "tipo_premio": "DIRETO",
+                      "moeda_premio": "BRL",
+                      "valor_premio": "433.5000",
+                      "id_pessoa_origem": "bf5386f1-240b-4d49-939c-81513fbed548"
+                  }, {
+                      "natureza_premio": "IMPOSTO",
+                      "tipo_premio": "IOF",
+                      "moeda_premio": "BRL",
+                      "valor_premio": "0.0000",
+                      "id_pessoa_origem": "bf5386f1-240b-4d49-939c-81513fbed548"
+                  }, {
+                      "natureza_premio": "INTERMEDIACAO",
+                      "tipo_premio": "COMISSAO_CORRETAGEM",
+                      "moeda_premio": "BRL",
+                      "valor_premio": "76.5000",
+                      "id_pessoa_origem": "96077aa9-f69b-4608-99ce-fe99837d50dc"
+                  }
+              ],
+              "id_pagador": "bf5386f1-240b-4d49-939c-81513fbed548",
+              "meio_pagamento": "BOLETO",
+              "instrucao_pagamento": "1ª de $510.00",
+              "domicilio_bancario": "string"
+          }
+      ]
+  }
 }
+
 `
 
-//const resultado = gramatica.match(inputs);
+
 const resultado = gramatica2.match(inputs2);
 if(resultado.succeeded()){
   console.log("Operações OK");
@@ -245,53 +487,6 @@ const semantica = gramatica2.createSemantics();
 var json = "{ \n\t";
 var list = [];
 var contTab =1
-
-function backEnd2(){
-    semantica.addOperation('generateCode', {
-        Inicio(com1, cab, com2, est, com3){
-          est.generateCode();
-          for(var cont = 0; cont< list.length; cont++){
-            json+= list[cont]
-          }
-          json = json.substring(0, json.length-1)
-          json += "}"
-        },
-        Estrutura(start1, variavel, end1, content, start2, variavel2, end2){
-            var object = "\"" + variavel.sourceString + "\": ";
-            if(content.sourceString.substring(0,1) == "<"){
-              object += "{\n"
-              contTab++
-              for(var c=0; c<contTab;c++){
-                object += "\t"
-              }
-              list.push(object);
-              content.generateCode();
-              var aux = list.pop()
-              aux.replace( "", aux.lastIndexOf('\,'));
-              list.push(aux.substring(0, aux.length-1))
-              contTab--
-              var chave = "}\n"
-              for(var c=0; c<contTab;c++){
-                chave += "\t"
-              }
-              list.push(chave)
-
-            }
-            else{
-              var conteudo = content.generateCode();
-              object += conteudo
-              for(var c=0; c<contTab;c++){
-                object += "\t"
-              }
-              list.push(object)
-            }
-        },
-        Informacao(info){
-            return "\"" + info.sourceString + "\",\n"
-        }
-    }
-    )
-}
 
 function backEnd3(){
   semantica.addOperation('compile', {
