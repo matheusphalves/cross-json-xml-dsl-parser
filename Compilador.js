@@ -228,8 +228,7 @@ function backEnd(){
           json += est.generateCode();
         },
         Estrutura(start1, variavel, end1, content, start2, variavel2, end2){
-          var object = "";
-          object = "\"" + variavel.sourceString + "\": ";
+          var object = "\"" + variavel.sourceString + "\": ";
             if(content.sourceString.substring(0,1) == "<"){
               object += "{\n"
               contTab++;
@@ -240,14 +239,13 @@ function backEnd(){
               object += auxTab;
               //list.push(object);
               object += content.generateCode();
-              contTab--;
+              //contTab--;
               object += "}\n";
               
               return object;
 
             }
             else{
-
               object += content.generateCode();
               
               for(var a=0; a < contTab; a++){
@@ -256,6 +254,7 @@ function backEnd(){
               return object;
             }
         },
+
         Informacao(info){
             return "\"" + info.sourceString + "\",\n"
         }
@@ -289,3 +288,5 @@ backEnd();
 //semantica(resultado).compile()
 semantica(resultado).generateCode()
 console.log(json)
+
+console.log(list)
