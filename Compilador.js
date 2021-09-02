@@ -1,72 +1,71 @@
 const ohm = require('ohm-js')
 
-//A++ to OOA
-const gramatica = ohm.grammar(`
+//Objective A para A++
+//Richard Jeremias Martins Rocha
+//Data: 02/09
+//1º Exercício Escolar
+
+const gramaticaCompilador = ohm.grammar(`
 Comandos {
   Inicio = Colecao+
-  Colecao = "class " classeFilha "subclassof" classePai "{" Construtor "}"
-  classeFilha = letter alnum*
-  classePai = letter alnum*
-  Variavel = Tipo Reservada
-  Reservada = ~Tipo letter letter*
-  Tipo = ("int" | "double" | "string" | "long" | "boolean")
-  Construtor = classeFilha "(" Variavel  OutrasVariaveis* ");"
-  OutrasVariaveis = ("," Variavel)
+  Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
+  Classe = letter alnum*
+  Variavel = (_virgula? Tipo Exclusiva)+
+  Exclusiva = ~Tipo letter letter*
+  Tipo = ("boolean" | "char" | "double" | "int" | "long" | "String")
+  _classe = "class"
+  _virgula = ","
+  _fechaParenteses = ")"
+  _abreParenteses = "("
+  _abreChaves = "{"
+  _fechaChaves = "}"
+  _doisPontos = ":"
 }
 `)
 
 const inputs = `
-class Ponto subclassof Birilo {
-    Ponto(int x, int y, int z);
+class Ponto1(int x, int y) : Ponto2 {
 }
-class Ponto2 subclassof Birilo {
-  Ponto2(int a, int b, int y);
+class Ponto2(int a, int b) : Figura {
 }
-class Ponto3 subclassof Birilo {
-  Ponto3(int a, int b, int y);
+class Ponto3(int z, int w) : Figura {
 }
 `;
 
-const resultado = gramatica.match(inputs);
+const resultadoGramaticaCompilador = gramaticaCompilador.match(inputs);
 
-if(resultado.succeeded()){
-  console.log("Padrões OK\n");
+if(resultadoGramaticaCompilador.succeeded()){
+  console.log("Correto! A gramática foi lida corretamente.\n");
 }else{
-  console.log("Erro");
-  console.log(resultado.message)
+  console.log("Erro! Sua gramática não foi lida corretamente.\n");
+  console.log(resultadoGramaticaCompilador.message)
 }
 
-const semantica = gramatica.createSemantics();
+const semanticaCompilador = gramaticaCompilador.createSemantics();
 
 function compile(){
-    semantica.addOperation('compile', {
+    semanticaCompilador.addOperation('compile', {
         Inicio(colecao){
-          let colecaoLista = colecao.compile();
-          let colecaoSet = new Set(colecaoLista);
-          if(colecaoLista.length != colecaoSet.size){
+          let colecaoTotal = colecao.compile();
+          let colecaoRestritiva = new Set(colecaoTotal);
+          if(colecaoTotal.length != colecaoRestritiva.size){
             throw Error(`Existem classes duplicadas na coleção.`);
           }
-          
         },
-        Colecao(class_, classeNome, subclassof, classeNome2, ac, construtor, fc){
-          const nomeConstrutor = construtor.compile();
-          if(classeNome.sourceString == classeNome2.sourceString){
-            throw Error(`A classe '${classeNome.sourceString}' não pode herdar dela mesma.`)
-          }else if(nomeConstrutor != classeNome.sourceString){
-            throw Error(`O nome do construtor deve ter o mesmo nome da classe.`)
+       // Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
+        Colecao(_classe,classe,ap,variavel,fp,dp,classeDois,ac, fc){
+          let conjuntoVariaveis = new Set()
+
+          variavel.children.map(x => console.log(x.sourceString))
+
+          if(classe.sourceString == classeDois.sourceString){
+            throw Error(`Erro de programação! A classe '${classe.sourceString}' não pode herdar dela mesma.`)
           }
 
-          return classeNome.sourceString;
+          return classe.sourceString;
         },
 
-        classeFilha(nome, nome2){
-          return nome.sourceString
-        },
-
-        classePai(nome, nome2){
-          return nome.sourceString
-        },
-
+        /*
         Construtor(classeNome, ap, variavel1, outrasVariaveis, fp){
           let variaveisSet = new Set(variavel1.compile().split(' ')[1]);
           let count = 1;
@@ -80,27 +79,24 @@ function compile(){
           return classeNome.sourceString;
 
         },
+        */
 
-        Variavel(tipo, nome){
-          return tipo.compile() + " " + nome.sourceString;
+        Variavel(_virgula,variavel,exclusiva){
+          return exclusiva.sourceString();
         },
 
         Tipo(tipo){return tipo.sourceString;},
-
-        OutrasVariaveis(pv, nome){
-          return nome.sourceString;
-        },
 
         _terminal() {return this.primitiveValue;}
 
     })
 }
 
-var codigoGerado = "CÓDIGO GERADO PARA LINGUAGEM OOA\n\n";
-var list = []
+let list = []
 
+/*
 function generateCode(){
-    semantica.addOperation('generateCode', {
+    semanticaCompilador.addOperation('generateCode', {
         Inicio(colecao){
           colecao.generateCode()
           for (var cont = 0; cont < list.length; cont++) {
@@ -116,9 +112,10 @@ function generateCode(){
         }
     })
 }
+*/
 
+//console.log("Zaoshang hao! O código foi gerado para a linguagem A++");
 compile();
-generateCode();
-semantica(resultado).compile();
-semantica(resultado).generateCode();
-console.log(codigoGerado);
+//generateCode();
+semanticaCompilador(resultadoGramaticaCompilador).compile();
+//semanticaCompilador(resultado).generateCode();
