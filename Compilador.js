@@ -37,60 +37,59 @@ if(resultado.succeeded()){
 const semantica = gramatica.createSemantics();
 
 function compile(){
+    var error =  false;
+
     semantica.addOperation('compile', {
-        Inicio(colecao){
-          let colecaoLista = colecao.compile();
+        Inicio(classes){
+          console.log("2. Validando Compilação...");
+          let colecaoLista = classes.compile();
           let colecaoSet = new Set(colecaoLista);
           if(colecaoLista.length != colecaoSet.size){
-            throw Error(`Existem classes duplicadas na coleção.`);
+            console.log(`\tERRO: Existem classes duplicadas na coleção.`);
+            error = true;
           }
           
-        },
-        Colecao(class_, classeNome, subclassof, classeNome2, ac, construtor, fc){
-          const nomeConstrutor = construtor.compile();
-          if(classeNome.sourceString == classeNome2.sourceString){
-            throw Error(`A classe '${classeNome.sourceString}' não pode herdar dela mesma.`)
-          }else if(nomeConstrutor != classeNome.sourceString){
-            throw Error(`O nome do construtor deve ter o mesmo nome da classe.`)
+          if(error == false) {
+            console.log("\tCompilação concluída com sucesso!\n-------------------\nRESULTADO DA CONVERSÃO PARA LINGUAGEM OAA\n");
           }
-
-          return classeNome.sourceString;
         },
-
-        classeFilha(nome, nome2){
-          return nome.sourceString
-        },
-
-        classePai(nome, nome2){
-          return nome.sourceString
-        },
-
-        Construtor(classeNome, ap, variavel1, outrasVariaveis, fp){
-          let variaveisSet = new Set(variavel1.compile().split(' ')[1]);
-          let count = 1;
-          outrasVariaveis.children.map(item => {
-            variaveisSet.add(item.compile().split(' ')[1]);
+        
+        Classes(class_, classeNome, aP, variaveis, fP, dP, classeExtend, aC, fC){
+          
+          if(classeNome.sourceString == classeExtend.sourceString){
+            console.log(`\tERRO: A classe '${classeNome.sourceString}' não pode herdar dela mesma.`);
+            error = true;
+          }
+          
+          var setVariaveis = new Set();
+          let count = 0;
+          variaveis.children.map(variavel => {
+            setVariaveis.add(variavel.compile());
             count++;
           });
-          if(variaveisSet.size != count){
-            throw Error(`Construtor possui variáveis duplicadas em sua assinatura.`)
+
+          if(setVariaveis.size != count){
+            console.log(`\tERRO: Classe possui variáveis duplicadas.`);
+            error = true;
           }
           return classeNome.sourceString;
-
         },
 
-        Variavel(tipo, nome){
-          return tipo.compile() + " " + nome.sourceString;
+        ClasseExtend(letter, alnum){
+          return letter.sourceString + alnum.sourceString
+        },
+
+        NomeClasse(letter, alnum){
+          return letter.sourceString + alnum.sourceString
         },
 
         Tipo(tipo){return tipo.sourceString;},
-
-        OutrasVariaveis(pv, nome){
-          return nome.sourceString;
-        },
-
+        
+        Variavel(virgula, tipo, nomeVariavel){
+          return nomeVariavel.sourceString;
+        }, 
+        
         _terminal() {return this.primitiveValue;}
-
     })
 }
 
