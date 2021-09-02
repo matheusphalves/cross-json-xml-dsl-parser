@@ -54,9 +54,10 @@ function compile(){
         },
        // Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
         Colecao(_classe,classe,ap,variavel,fp,dp,classeDois,ac, fc){
-          let conjuntoVariaveis = new Set()
-
-          variavel.children.map(x => console.log(x.sourceString))
+          //let conjuntoVariaveis = new Set()
+          let listaVariaveis = variavel.compile(); 
+          //terminal variável abriga uma ou mais variáveis, avalie repetição ou não no método Variavel
+          //usar listaVariaveis para demais necessidades...
 
           if(classe.sourceString == classeDois.sourceString){
             throw Error(`Erro de programação! A classe '${classe.sourceString}' não pode herdar dela mesma.`)
@@ -81,8 +82,17 @@ function compile(){
         },
         */
 
-        Variavel(_virgula,variavel,exclusiva){
-          return exclusiva.sourceString();
+        Variavel(_virgula, variavel, exclusiva){
+          let listaVariaveis = exclusiva.compile(); //obter lista de todas as variáveis
+          let conjuntoVariaveis = new Set(listaVariaveis);
+          if(listaVariaveis.length != conjuntoVariaveis.size){
+            throw Error(`Existem variáveis duplicadas na declaração do construtor.`)
+          }
+          return conjuntoVariaveis;
+        },
+
+        Exclusiva(nome, nome2){ //nome da variável armazenada em Não-terminal
+          return nome.sourceString + nome2.sourceString;
         },
 
         Tipo(tipo){return tipo.sourceString;},
