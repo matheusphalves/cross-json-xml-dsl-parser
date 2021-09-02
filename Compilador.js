@@ -3,22 +3,22 @@ const ohm = require('ohm-js')
 //A++ to OOA
 const gramatica = ohm.grammar(`
 Comandos {
-    Inicio = Colecao+
-    Colecao = "class " ClasseNome "subclassof" ClasseNome " { " Construtor " } " 
-    ClasseNome = letter+
-    Construtor = ClasseNome "(" Variavel ( "," Variavel)* ");"
-    Variavel = Tipo Reservada
-    Reservada = ~Tipo letter+
-    Tipo = ("int" | "double" | "string" | "long" | "boolean")
+  Inicio = Colecao+
+  Colecao = "class " classeFilha "subclassof" classePai "{" Construtor "}"
+  classeFilha = letter alnum*
+  classePai = letter alnum*
+  Variavel = Tipo letter letter*
+  Tipo = ("int" | "double" | "string" | "long" | "boolean")
+  Construtor = classeFilha "(" Variavel ( "," Variavel)* ");"
 }
 `)
-
-
-
 
 const inputs = `
 class Ponto subclassof Birilo {
     Ponto(int x, int y);
+}
+class Ponto subclassof Ponto {
+  Ponto(int x, int y);
 }
 `;
 
@@ -40,14 +40,19 @@ function compile(){
           colecao.compile();
         },
         Colecao(class_, classeNome, subclassof, classeNome2, ac, construtor, fc){
-          console.log(classeNome2.sourceString)
+          console.log(classeNome.sourceString, classeNome2.sourceString)
           if(classeNome.sourceString == classeNome2.sourceString){
-            throw Error(`A '${classeNome}' não pode herdar dela mesma.`)
+            throw Error(`A classe '${classeNome.sourceString}' não pode herdar dela mesma.`)
           }
 
         },
 
-        ClasseNome(nome){
+        classeFilha(nome, nome2){
+          console.log(nome.sourceString)
+          return nome.sourceString
+        },
+
+        classePai(nome, nome2){
           console.log(nome.sourceString)
           return nome.sourceString
         },
@@ -56,12 +61,8 @@ function compile(){
           
         },
 
-        Variavel(tipo, nome){
-          return tipo.compile() + nome.compile();
-        },
-
-        Reservada(nome){
-          return nome.sourceString;
+        Variavel(tipo, nome, nome2){
+          return tipo.compile() + nome.sourceString + nome2.sourceString;
         },
 
         Tipo(tipo){return tipo.sourceString;},
