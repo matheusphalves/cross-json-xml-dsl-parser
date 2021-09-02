@@ -4,13 +4,12 @@ const ohm = require('ohm-js')
 const gramatica = ohm.grammar(`
 Comandos {
   Inicio = Colecao+
-  Colecao = "class " classeFilha "subclassof" classePai "{" Construtor "}"
-  classeFilha = letter alnum*
-  classePai = letter alnum*
+  Colecao = "class " classeNome "subclassof" classeNome "{" Construtor "}"
+  classeNome = letter alnum*
   Variavel = Tipo Reservada
   Reservada = ~Tipo letter letter*
   Tipo = ("int" | "double" | "string" | "long" | "boolean")
-  Construtor = classeFilha "(" Variavel  OutrasVariaveis* ");"
+  Construtor = classeNome "(" Variavel  OutrasVariaveis* ");"
   OutrasVariaveis = ("," Variavel)
 }
 `)
@@ -59,11 +58,7 @@ function compile(){
           return classeNome.sourceString;
         },
 
-        classeFilha(nome, nome2){
-          return nome.sourceString
-        },
-
-        classePai(nome, nome2){
+        classeNome(nome, nome2){
           return nome.sourceString
         },
 
