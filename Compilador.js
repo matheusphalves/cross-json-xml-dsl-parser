@@ -93,24 +93,32 @@ function compile(){
     })
 }
 
-var codigoGerado = "CÓDIGO GERADO PARA LINGUAGEM OOA\n\n";
-var list = []
+var codigoGerado = "";
 
 function generateCode(){
     semantica.addOperation('generateCode', {
-        Inicio(colecao){
-          colecao.generateCode()
-          for (var cont = 0; cont < list.length; cont++) {
-            codigoGerado += list[cont]
-          }
+        Inicio(classes){
+          classes.generateCode();
         },
-        Colecao(class_, classeNome, subClass, nomeClass, ac, constr, fc){
-          var string = class_.sourceString + classeNome.sourceString + " extends " + nomeClass.sourceString + ac.sourceString + "\n\t" + constr.generateCode() + "\n" + fc.sourceString +"\n"
-          list.push(string)
+
+        Classes(class_, classeNome, aP, variaveis, fP, dP, classeExtend, aC, fC){
+          codigoGerado = "class " + classeNome.sourceString
+          codigoGerado += classeExtend.sourceString != "" ? " extends " + classeExtend.sourceString + " {\n\tconstructor(" : " {\n\tconstructor(" ;
+          
+          variaveis.children.map(variavel => {
+            codigoGerado += variavel.generateCode();
+          });
+
+          codigoGerado += ");\n}";
         },
-        Construtor(classNome, ap, variavel, variaveis, fp){
-          return "constructor " + ap.sourceString + variavel.sourceString + variaveis.sourceString + fp.sourceString
-        }
+
+        Variavel(virgula, tipo, nomeVariavel){
+          var stringVirgula = virgula.sourceString == "" ? virgula.sourceString : virgula.sourceString + " "
+
+          return stringVirgula + tipo.sourceString + " " + nomeVariavel.sourceString;
+        },
+
+        Tipo(tipo){return tipo.sourceString;}
     })
 }
 
