@@ -28,9 +28,9 @@ class Ponto3 subclassof Birilo {
 const resultado = gramatica.match(inputs);
 
 if(resultado.succeeded()){
-  console.log("Padrões OK\n");
+  console.log("1. Validando Gramatica...\n\tGramatica validada com sucesso!");
 }else{
-  console.log("Erro");
+  console.log("ERRO: Gramatica não está correta!");
   console.log(resultado.message)
 }
 
