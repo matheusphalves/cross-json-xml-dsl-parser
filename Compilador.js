@@ -1,17 +1,15 @@
 const ohm = require('ohm-js')
 
-//A++ to OOA
+//Object A to OOA
 const gramatica = ohm.grammar(`
 Comandos {
-  Inicio = Colecao+
-  Colecao = "class " classeFilha "subclassof" classePai "{" Construtor "}"
-  classeFilha = letter alnum*
-  classePai = letter alnum*
-  Variavel = Tipo Reservada
-  Reservada = ~Tipo letter letter*
+  Inicio = Classes+
+  Classes = "class" NomeClasse "(" Variavel+ ")" (":" ClasseExtend)? "{" "}"
+  ClasseExtend = letter alnum*
+  NomeClasse = letter alnum*
   Tipo = ("int" | "double" | "string" | "long" | "boolean")
-  Construtor = classeFilha "(" Variavel  OutrasVariaveis* ");"
-  OutrasVariaveis = ("," Variavel)
+  Variavel = (",")? Tipo NomeVariavel
+  NomeVariavel = letter alnum*
 }
 `)
 
