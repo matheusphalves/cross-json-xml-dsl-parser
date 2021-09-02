@@ -14,14 +14,7 @@ Comandos {
 `)
 
 const inputs = `
-class Ponto subclassof Birilo {
-    Ponto(int x, int y, int z);
-}
-class Ponto2 subclassof Birilo {
-  Ponto2(int a, int b, int y);
-}
-class Ponto3 subclassof Birilo {
-  Ponto3(int a, int b, int y);
+class Ponto(int x, int y, string s) : Figura {
 }
 `;
 
