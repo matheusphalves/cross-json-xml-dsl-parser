@@ -81,7 +81,7 @@ function compile(){
           
           //caso o nome da classe e o nome da classe extendida seja o mesmo,
           //imprime o erro e seta error = true
-          if(classeNome.sourceString == classeExtend.sourceString){
+          if(classeNome.sourceString == classeExtend.compile()){
             console.log(`\tERRO: A classe não pode herdar dela mesma.`);
             error = true;
           }
