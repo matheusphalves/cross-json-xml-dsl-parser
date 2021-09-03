@@ -22,7 +22,13 @@ Comandos {
 `)
 
 const inputs = `
-class Ponto(int x, int y, string s) : Figura {
+class Ponto(int a, int b) : Figura {
+}
+
+class Ponto1() {
+}
+
+class Ponto2(int a, int b, boolean c) {
 }
 `;
 
