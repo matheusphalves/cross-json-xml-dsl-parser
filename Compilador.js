@@ -16,11 +16,11 @@ Comandos {
 
 
 const inputs = `
-class Ponto subclassof PontoA {
-    Ponto(int x, int z);
+class Ponto subclassof Imagem {
+    Ponto(int c, int d);
 }
-class PontoA subclassof Figura {
-  PontoA(int y, int x);
+class PontoTeste subclassof Ponto {
+  PontoTeste(int a, int teste);
 }
 
 `;
@@ -28,16 +28,15 @@ class PontoA subclassof Figura {
 const resultado = gramatica.match(inputs);
 
 if (resultado.succeeded()) {
-  console.log("Padrões OK");
+  console.log("Entrada aceita");
 } else {
   console.log("Erro");
   console.log(resultado.message)
 }
 
 const semantica = gramatica.createSemantics();
-const ooaCode = ''
 
-var codigoGerado = "Gerado código para ObjectiveA \n\n";
+var codigoGerado = "\nGerado código para ObjectiveA \n\n";
 var list = []
 
 function compile() {
@@ -50,7 +49,7 @@ function compile() {
       }
     },
     Colecao(class_, classeNome, subclassof, classeNome2, ac, construtor, fc) {
-      const nomeConstrutor = construtor.compile();
+      var nomeConstrutor = construtor.compile();
       if (classeNome.sourceString == classeNome2.sourceString) {
         throw Error(`A classe ${classeNome.sourceString} não pode ser subclasse dela mesma`)
       } else if (nomeConstrutor != classeNome.sourceString) {
@@ -58,16 +57,20 @@ function compile() {
       }
       return classeNome.sourceString;
     },
-    Construtor(classeNome, ap, variavel1, outrasVariaveis, fp){
-      let variaveisLista = [ variavel1.sourceString.split(' ')[1], ...outrasVariaveis.sourceString.split(' ')[2]] 
-      let variaveisSet = new Set(variaveisLista); 
+    Construtor(classeNome, ap, variavel1, variasVariaveis, fp){
+      var variaveisLista = [ variavel1.sourceString.split(' ')[1], ...variasVariaveis.compile()] 
+      var variaveisSet = new Set(variaveisLista); 
 
       if(variaveisLista.length != variaveisSet.size){
         throw Error(`Construtor tem mais de uma variável com mesmo nome`)
       }
       return classeNome.sourceString;
 
+    },
+    VariasVariaveis(vr, variavel){
+      return variavel.sourceString.split(' ')[1]
     }
+
   })
   semantica.addOperation('generateCode', {
     Inicio(colecao) {
