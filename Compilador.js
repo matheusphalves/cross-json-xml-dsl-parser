@@ -12,6 +12,12 @@ const gramatica = ohm.grammar(`
 Comandos {
   Inicio = Classes+
   Classes = "class" NomeClasse "(" Variavel* ")" (":" ClasseExtend)? "{" "}"
+  ClasseExtend = ~reservadas letter alnum*
+  NomeClasse = ~reservadas letter alnum*
+  tipo = ("int" | "double" | "string" | "long" | "boolean")
+  Variavel = (",")? tipo nomeVariavel
+  nomeVariavel = ~reservadas letter alnum*
+  reservadas = tipo | "class" | "extends" | "constructor"
 }
 `)
 
@@ -98,7 +104,7 @@ function compile(){
           return letter.sourceString + alnum.sourceString
         },
 
-        Tipo(tipo){return tipo.sourceString;},
+        tipo(tipo){return tipo.sourceString;},
         
         Variavel(virgula, tipo, nomeVariavel){
           return nomeVariavel.sourceString;
@@ -140,7 +146,7 @@ function generateCode(){
           return stringVirgula + tipo.sourceString + " " + nomeVariavel.sourceString;
         },
 
-        Tipo(tipo){return tipo.sourceString;}
+        tipo(tipo){return tipo.sourceString;}
     })
 }
 
