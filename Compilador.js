@@ -127,26 +127,23 @@ function generateCode(){
 
         Classes(class_, classeNome, aP, variaveis, fP, dP, classeExtend, aC, fC){
           //criando nome do método: class + nome da classe
-          linguagemOOA = "class " + classeNome.sourceString
+          linguagemOOA += "class " + classeNome.sourceString
+          
           //se existe um extends em Object A, deve adicionar extends + nome da classe extendida, caso contrario, segue sem o extends
-          linguagemOOA += classeExtend.sourceString != "" ? " extends " + classeExtend.sourceString + " {\n\tconstructor(" : " {\n\tconstructor(" ;
+          linguagemOOA += classeExtend.sourceString != "" ? " extends " + classeExtend.generateCode() + " {\n\tconstructor(" : " {\n\tconstructor(" ;
           
           //mapeando todas as variaveis e adicionando ao construtor
           variaveis.children.map(variavel => {
-            linguagemOOA += variavel.generateCode();
+            linguagemOOA += variavel.sourceString;
           });
 
           //fechando a classe
-          linguagemOOA += ");\n}";
+          linguagemOOA += ");\n}\n\n";
         },
 
-        Variavel(virgula, tipo, nomeVariavel){
-          var stringVirgula = virgula.sourceString == "" ? virgula.sourceString : virgula.sourceString + " "
-
-          return stringVirgula + tipo.sourceString + " " + nomeVariavel.sourceString;
-        },
-
-        tipo(tipo){return tipo.sourceString;}
+        ClasseExtend(letter, alnum){
+          return letter.sourceString + alnum.sourceString
+        }
     })
 }
 
