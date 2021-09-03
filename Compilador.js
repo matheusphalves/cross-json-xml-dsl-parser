@@ -123,14 +123,17 @@ function generateCode(){
 
         Classes(class_, classeNome, aP, variaveis, fP, dP, classeExtend, aC, fC){
           //criando nome do método: class + nome da classe
+          linguagemOOA = "class " + classeNome.sourceString
           //se existe um extends em Object A, deve adicionar extends + nome da classe extendida, caso contrario, segue sem o extends
+          linguagemOOA += classeExtend.sourceString != "" ? " extends " + classeExtend.sourceString + " {\n\tconstructor(" : " {\n\tconstructor(" ;
           
           //mapeando todas as variaveis e adicionando ao construtor
           variaveis.children.map(variavel => {
-            codigoGerado += variavel.generateCode();
+            linguagemOOA += variavel.generateCode();
           });
 
           //fechando a classe
+          linguagemOOA += ");\n}";
         },
 
         Variavel(virgula, tipo, nomeVariavel){
@@ -147,4 +150,4 @@ compile();
 generateCode();
 semantica(resultado).compile();
 semantica(resultado).generateCode();
-console.log(codigoGerado);
+console.log(linguagemOOA);
