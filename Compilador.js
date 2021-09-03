@@ -9,7 +9,7 @@ Comandos {
     Construtor = classeNome "(" Variavel VariasVariaveis* ");"
     VariasVariaveis = "," Variavel
     Variavel = tipo  ~(reservada) letter alnum*
-    tipo = ("int" | "double" | "string" | "long" | "boolean")
+    tipo = ("int" | "boolean" | "long" | "string" | "double")
     reservada = tipo | "class" | "subclassof"
 }
 `)
@@ -17,10 +17,10 @@ Comandos {
 
 const inputs = `
 class Ponto subclassof Imagem {
-    Ponto(int c, int d);
+    Ponto( int c, int d);
 }
 class PontoTeste subclassof Ponto {
-  PontoTeste(int a, int teste);
+  PontoTeste( int a, int teste);
 }
 
 `;
