@@ -10,17 +10,17 @@ Comandos {
     VariasVariaveis = "," Variavel
     Variavel = tipo  ~(reservada) letter alnum*
     tipo = ("int" | "double" | "string" | "long" | "boolean")
-    reservada = tipo | "class" | "subclassof" | "classeNome"
+    reservada = tipo | "class" | "subclassof"
 }
 `)
 
 
 const inputs = `
-class Ponto subclassof Figura {
-    Ponto(int x, int y);
+class Ponto subclassof PontoA {
+    Ponto(int x, int z);
 }
 class PontoA subclassof Figura {
-  PontoA(int z, int y);
+  PontoA(int y, int x);
 }
 
 `;
@@ -37,7 +37,7 @@ if (resultado.succeeded()) {
 const semantica = gramatica.createSemantics();
 const ooaCode = ''
 
-var codigoGerado = "CÓDIGO GERADO PARA LINGUAGEM ObjectiveA\n\n";
+var codigoGerado = "Gerado código para ObjectiveA \n\n";
 var list = []
 
 function compile() {
@@ -46,27 +46,24 @@ function compile() {
       var colecaoLista = colecao.compile();
       var colecaoSet = new Set(colecaoLista);
       if (colecaoLista.length != colecaoSet.size) {
-        throw Error(`Existem classes duplicadas na coleção.`);
+        throw new Error(`Não deve existir classes com mesmo nome`);
       }
     },
     Colecao(class_, classeNome, subclassof, classeNome2, ac, construtor, fc) {
       const nomeConstrutor = construtor.compile();
       if (classeNome.sourceString == classeNome2.sourceString) {
-        throw Error(`A classe '${classeNome.sourceString}' não pode herdar dela mesma.`)
+        throw Error(`A classe ${classeNome.sourceString} não pode ser subclasse dela mesma`)
       } else if (nomeConstrutor != classeNome.sourceString) {
-        throw Error(`O nome do construtor deve ter o mesmo nome da classe.`)
+        throw Error(`O construtor não tem o mesmo nome de sua classe`)
       }
       return classeNome.sourceString;
     },
-    Construtor(classeNome, ap, variavel1, outrasVariaveis, fp) {
-      var variaveisSet = new Set(variavel1.sourceString.split(' ')[1]);
-      var cont = 1;
-      outrasVariaveis.children.map(x => {
-        variaveisSet.add(x.sourceString.split(' ')[1]);
-        cont++;
-      });
-      if (variaveisSet.size != cont) {
-        throw Error(`Construtor possui variáveis duplicadas em sua assinatura.`)
+    Construtor(classeNome, ap, variavel1, outrasVariaveis, fp){
+      let variaveisLista = [ variavel1.sourceString.split(' ')[1], ...outrasVariaveis.sourceString.split(' ')[2]] 
+      let variaveisSet = new Set(variaveisLista); 
+
+      if(variaveisLista.length != variaveisSet.size){
+        throw Error(`Construtor tem mais de uma variável com mesmo nome`)
       }
       return classeNome.sourceString;
 
