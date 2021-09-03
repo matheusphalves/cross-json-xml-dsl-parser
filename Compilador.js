@@ -27,10 +27,11 @@ class Ponto(int x, int y, string s) : Figura {
 
 const resultado = gramatica.match(inputs);
 
+console.log("1. Validando Gramatica...");
 if(resultado.succeeded()){
-  console.log("1. Validando Gramatica...\n\tGramatica validada com sucesso!");
+  console.log("\tGramatica validada com sucesso!");
 }else{
-  console.log("ERRO: Gramatica não está correta!");
+  console.log("\tERRO: Gramatica não está correta!");
   console.log(resultado.message)
 }
 
@@ -54,6 +55,8 @@ function compile(){
           //caso o tamanho da lista de todas as classes seja diferente da lista de Set sem repetição,
           //significa que existem classes com o mesmo nome
           if(colecaoLista.length != colecaoSet.size){
+            console.log(`\tERRO: Existem classes com nomes duplicados.`);
+
             //seta que existem erros na compilação
             error = true;
           }
@@ -69,7 +72,7 @@ function compile(){
           //caso o nome da classe e o nome da classe extendida seja o mesmo,
           //imprime o erro e seta error = true
           if(classeNome.sourceString == classeExtend.sourceString){
-            console.log(`\tERRO: A classe '${classeNome.sourceString}' não pode herdar dela mesma.`);
+            console.log(`\tERRO: A classe não pode herdar dela mesma.`);
             error = true;
           }
           
