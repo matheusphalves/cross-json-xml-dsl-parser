@@ -8,13 +8,12 @@ const ohm = require('ohm-js')
 const gramaticaCompilador = ohm.grammar(`
 Comandos {
   Inicio = Colecao+
-  Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
+  Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses (_doisPontos Classe)? _abreChaves _fechaChaves
   Classe = letter alnum*
-  Variavel = (_virgula? Tipo Exclusiva)+
+  Variavel = ((",")? Tipo Exclusiva)+
   Exclusiva = ~Tipo letter letter*
   Tipo = ("boolean" | "char" | "double" | "int" | "long" | "String")
   _classe = "class"
-  _virgula = ","
   _fechaParenteses = ")"
   _abreParenteses = "("
   _abreChaves = "{"
@@ -24,11 +23,13 @@ Comandos {
 `)
 
 const inputs = `
-class Ponto1(int x, int w,int ) : Ponto2 {
+class Ponto1(int x, int w,int l) : Ponto2 {
 }
-class Ponto2(int s, int b) : Figura {
+class Figura(int s, int b) : Figurinha {
 }
-class Ponto3(int z, int y) : Figura {
+class Ponto3(int z, int y){
+}
+class Ponto4(int z, int w, int t, int x) : Ponto2 {
 }
 `;
 
@@ -58,35 +59,25 @@ function compile(){
           let listaVariaveis = variavel.compile();
           //terminal variável abriga uma ou mais variáveis, avalie repetição ou não no método Variavel
           //usar listaVariaveis para demais necessidades...
-          if(classe.sourceString == classeDois.sourceString){
-            throw Error(`Erro de programação! A classe '${classe.sourceString}' não pode herdar dela mesma.`)
+          if(classe.sourceString == classeDois.compile()){
+            throw Error(`Erro de programação! A classe ${classe.sourceString} não pode herdar dela mesma.`)
           }
 
           return classe.sourceString;
         },
-
-        /*
-        Construtor(classeNome, ap, variavel1, outrasVariaveis, fp){
-          let variaveisSet = new Set(variavel1.compile().split(' ')[1]);
-          let count = 1;
-          outrasVariaveis.children.map(item => {
-            variaveisSet.add(item.compile().split(' ')[1]);
-            count++;
-          });
-          if(variaveisSet.size != count){
-            throw Error(`Construtor possui variáveis duplicadas em sua assinatura.`)
-          }
-          return classeNome.sourceString;
-
-        },
-        */
-        Variavel(_virgula, variavel, exclusiva){
+        Variavel(virgula, variavel, exclusiva){
           let listaVariaveis = exclusiva.compile(); //obter lista de todas as variáveis
           let conjuntoVariaveis = new Set(listaVariaveis);
           if(listaVariaveis.length != conjuntoVariaveis.size){
             throw Error(`Existem variáveis duplicadas na declaração do construtor.`)
           }
           return conjuntoVariaveis;
+        },
+
+        //Classe = letter alnum*
+
+        Classe(nome,nome2){
+          return nome.sourceString + nome2.sourceString
         },
 
         Exclusiva(nome, nome2){ //nome da variável armazenada em Não-terminal
@@ -100,7 +91,7 @@ function compile(){
     })
 }
 
-let list = []
+let codigoGerado = "";
 
 //Inicio = Colecao+
 //Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
@@ -108,31 +99,20 @@ function generateCode(){
     semanticaCompilador.addOperation('generateCode', {
         Inicio(colecao){
           colecao.generateCode()
-          for (var cont = 0; cont < list.length; cont++) {
-            codigoGerado += list[cont]
-          }
-        },
-        /*
-        class Ponto subclassof Figura {
-            Ponto(int x, int y);
-        }
-      */
-        Colecao(_classe,classe,ap,variavel,fp,dp,classeDois,ac, fc){
-          var string = _classe.sourceString + classe.sourceString + "subclassof"
-                       + classeDois.sourceString + ac.sourceString + "\n\t" + classe.sourceString + ap
-                       + variavel.compile + fp.sourceString + ";"+ "\n" +  fc.sourceString
-          list.push(string)
         },
 
-        Construtor(classNome, ap, variavel, variaveis, fp){
-          return "constructor " + ap.sourceString + variavel.sourceString + variaveis.sourceString + fp.sourceString
+        Colecao(_classe,classe,ap,variavel,fp,dp,classeDois,ac, fc){
+          codigoGerado += "class " + classe.sourceString;
+          codigoGerado += classeDois.sourceString == ""? " {" : " subclassof " + classeDois.sourceString + " {";
+          codigoGerado += "\n\t" + classe.sourceString + "(" + variavel.sourceString + ");\n}\n";
         }
-    })
+      }
+    )
 }
 
-
-//console.log("Zaoshang hao! O código foi gerado para a linguagem A++");
+console.log("Zaoshang hao! O código foi gerado para a linguagem A++\n");
 compile();
-//generateCode();
+generateCode();
 semanticaCompilador(resultadoGramaticaCompilador).compile();
-//semanticaCompilador(resultado).generateCode();
+semanticaCompilador(resultadoGramaticaCompilador).generateCode();
+console.log(codigoGerado)
