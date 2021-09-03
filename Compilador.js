@@ -50,8 +50,6 @@ var error =  false;
 //compilando gramatica para verificar se existem erros que não podem ser validados na gramatica
 //EX: não pode ter nomes de variaveis iguais, não pode existem nomes de classes iguais
 function compile(){
-    //variavel criada para saber se irá existir erros de compilação
-    var error =  false;
 
     semantica.addOperation('compile', {
         Inicio(classes){
@@ -137,7 +135,7 @@ function generateCode(){
         Classes(class_, classeNome, aP, variaveis, fP, dP, classeExtend, aC, fC){
           //criando nome do método: class + nome da classe
           linguagemOOA += "class " + classeNome.sourceString
-          
+
           //se existe um extends em Object A, deve adicionar extends + nome da classe extendida, caso contrario, segue sem o extends
           linguagemOOA += classeExtend.sourceString != "" ? " extends " + classeExtend.generateCode() + " {\n\tconstructor(" : " {\n\tconstructor(" ;
           
@@ -157,7 +155,6 @@ function generateCode(){
 }
 
 compile();
-generateCode();
 semantica(resultado).compile();
 
 if(error == false){
