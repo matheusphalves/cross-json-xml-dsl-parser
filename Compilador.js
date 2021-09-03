@@ -14,7 +14,7 @@ Comandos {
   Colecao = "class " classeNome "subclassof" classeNome "{" Construtor "}"
   classeNome = letter alnum*
   Variavel = Tipo Reservada
-  Reservada = ~Tipo letter letter*
+  Reservada = ~Tipo letter alnum*
   Tipo = ("int" | "double" | "string" | "long" | "boolean")
   Construtor = classeNome "(" Variavel  OutrasVariaveis* ");"
   OutrasVariaveis = ("," Variavel)
@@ -22,11 +22,11 @@ Comandos {
 `)
 
 const inputs = `
-class Ponto subclassof Birilo {
-    Ponto(int x, int y, int z);
+class PontoA subclassof Figura {
+    PontoA(int y, int x);
 }
 class Arvore subclassof Birilo {
-  Arvore(int a, int b, int y);
+  Arvore(int a, int b3ta, int y);
 }
 class Compilador subclassof Birilo {
   Compilador(int a, int b, double teste);
@@ -36,9 +36,9 @@ class Compilador subclassof Birilo {
 const resultado = gramatica.match(inputs);
 
 if(resultado.succeeded()){
-  console.log("Padrões OK\n");
+  console.log("[GRAMÁTICA]: OK\n");
 }else{
-  console.log("Erro");
+  console.log("[GRAMÁTICA]: FALHA");
   console.log(resultado.message)
 }
 
@@ -47,20 +47,20 @@ const semantica = gramatica.createSemantics();
 function compile(){
     semantica.addOperation('compile', {
         Inicio(colecao){
-          console.log('[COMPILANDO]')
           let colecaoLista = colecao.compile();
           let colecaoSet = new Set(colecaoLista);
           if(colecaoLista.length != colecaoSet.size){
-            throw Error(`FALHA: Existem classes duplicadas na coleção.`);
+            throw Error(`ERRO DE COMPILAÇÃO: Existem classes duplicadas na coleção.`);
           }
+          console.log('[COMPILAÇÃO]: OK')
           
         },
         Colecao(class_, classeNome, subclassof, classeNome2, ac, construtor, fc){
           const nomeConstrutor = construtor.compile();
           if(classeNome.sourceString == classeNome2.sourceString){
-            throw Error(`FALHA: A classe '${classeNome.sourceString}' não pode herdar dela mesma.`)
+            throw Error(`ERRO DE COMPILAÇÃO: A classe '${classeNome.sourceString}' não pode herdar dela mesma.`)
           }else if(nomeConstrutor != classeNome.sourceString){
-            throw Error(`FALHA: O nome do construtor deve ter o mesmo nome da classe.`)
+            throw Error(`ERRO DE COMPILAÇÃO: O nome do construtor deve ter o mesmo nome da classe.`)
           }
 
           return classeNome.sourceString;
@@ -71,17 +71,13 @@ function compile(){
         },
 
         Construtor(classeNome, ap, variavel1, outrasVariaveis, fp){
-          let variaveisSet = new Set(variavel1.compile());
-          let count = 1;
-          outrasVariaveis.children.map(item => {
-            variaveisSet.add(item.compile());
-            count++;
-          });
-          if(variaveisSet.size != count){
+          let variaveisLista = [ variavel1.compile(), ...outrasVariaveis.compile()] 
+          let variaveisSet = new Set(variaveisLista); //remove a repetição da lista anterior
+          
+          if(variaveisLista.length != variaveisSet.size){
             throw Error(`FALHA: Construtor possui variáveis duplicadas em sua assinatura.`)
           }
           return classeNome.sourceString;
-
         },
 
         Variavel(tipo, nome){
@@ -91,7 +87,7 @@ function compile(){
         Tipo(tipo){return tipo.sourceString;},
 
         OutrasVariaveis(pv, nome){
-          return nome.sourceString;
+          return nome.sourceString.split(' ')[1];
         },
 
         _terminal() {return this.primitiveValue;}
@@ -112,15 +108,15 @@ function generateCode(){
           }
         },
         Colecao(class_, classeNome, subClass, nomeClass, ac, constr, fc){
-          var string = class_.sourceString + classeNome.sourceString + " extends " + nomeClass.sourceString + ac.sourceString + "\n\t" + constr.generateCode() + "\n" + fc.sourceString +"\n"
-          list.push(string)
+          list.push(class_.sourceString + classeNome.sourceString + " extends " + 
+          nomeClass.sourceString + ac.sourceString + "\n\t" + constr.generateCode() + "\n" + fc.sourceString +"\n")
         },
         Construtor(classNome, ap, variavel, variaveis, fp){
           return "constructor " + ap.sourceString + variavel.sourceString + variaveis.sourceString + fp.sourceString
         }
     })
 }
-
+//adição das operações do compilador e posterior execução
 compile();
 generateCode();
 semantica(resultado).compile();
