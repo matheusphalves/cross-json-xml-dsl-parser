@@ -24,11 +24,11 @@ Comandos {
 `)
 
 const inputs = `
-class Ponto1(int x, int y) : Ponto2 {
+class Ponto1(int x, int w,int ) : Ponto2 {
 }
-class Ponto2(int a, int b) : Figura {
+class Ponto2(int s, int b) : Figura {
 }
-class Ponto3(int z, int w) : Figura {
+class Ponto3(int z, int y) : Figura {
 }
 `;
 
@@ -55,10 +55,9 @@ function compile(){
        // Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
         Colecao(_classe,classe,ap,variavel,fp,dp,classeDois,ac, fc){
           //let conjuntoVariaveis = new Set()
-          let listaVariaveis = variavel.compile(); 
+          let listaVariaveis = variavel.compile();
           //terminal variável abriga uma ou mais variáveis, avalie repetição ou não no método Variavel
           //usar listaVariaveis para demais necessidades...
-
           if(classe.sourceString == classeDois.sourceString){
             throw Error(`Erro de programação! A classe '${classe.sourceString}' não pode herdar dela mesma.`)
           }
@@ -81,7 +80,6 @@ function compile(){
 
         },
         */
-
         Variavel(_virgula, variavel, exclusiva){
           let listaVariaveis = exclusiva.compile(); //obter lista de todas as variáveis
           let conjuntoVariaveis = new Set(listaVariaveis);
@@ -104,7 +102,8 @@ function compile(){
 
 let list = []
 
-/*
+//Inicio = Colecao+
+//Colecao = _classe Classe _abreParenteses Variavel _fechaParenteses _doisPontos Classe _abreChaves _fechaChaves
 function generateCode(){
     semanticaCompilador.addOperation('generateCode', {
         Inicio(colecao){
@@ -113,16 +112,24 @@ function generateCode(){
             codigoGerado += list[cont]
           }
         },
-        Colecao(class_, classeNome, subClass, nomeClass, ac, constr, fc){
-          var string = class_.sourceString + classeNome.sourceString + " extends " + nomeClass.sourceString + ac.sourceString + "\n\t" + constr.generateCode() + "\n" + fc.sourceString +"\n"
+        /*
+        class Ponto subclassof Figura {
+            Ponto(int x, int y);
+        }
+      */
+        Colecao(_classe,classe,ap,variavel,fp,dp,classeDois,ac, fc){
+          var string = _classe.sourceString + classe.sourceString + "subclassof"
+                       + classeDois.sourceString + ac.sourceString + "\n\t" + classe.sourceString + ap
+                       + variavel.compile + fp.sourceString + ";"+ "\n" +  fc.sourceString
           list.push(string)
         },
+
         Construtor(classNome, ap, variavel, variaveis, fp){
           return "constructor " + ap.sourceString + variavel.sourceString + variaveis.sourceString + fp.sourceString
         }
     })
 }
-*/
+
 
 //console.log("Zaoshang hao! O código foi gerado para a linguagem A++");
 compile();
