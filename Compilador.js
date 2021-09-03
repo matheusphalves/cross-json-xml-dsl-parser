@@ -11,12 +11,7 @@ const ohm = require('ohm-js')
 const gramatica = ohm.grammar(`
 Comandos {
   Inicio = Classes+
-  Classes = "class" NomeClasse "(" Variavel+ ")" (":" ClasseExtend)? "{" "}"
-  ClasseExtend = letter alnum*
-  NomeClasse = letter alnum*
-  Tipo = ("int" | "double" | "string" | "long" | "boolean")
-  Variavel = (",")? Tipo NomeVariavel
-  NomeVariavel = letter alnum*
+  Classes = "class" NomeClasse "(" Variavel* ")" (":" ClasseExtend)? "{" "}"
 }
 `)
 
