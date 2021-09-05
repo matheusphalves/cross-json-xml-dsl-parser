@@ -242,25 +242,6 @@ function backEnd() {
       }
       var object = "\"" + variavel.sourceString + "\": ";
       if (content.sourceString.substring(0, 1) == "<") {
-        //if(content.sourceString.substring(1, content.sourceString.indexOf(">"))==variavel.sourceString){
-        /*if (content.sourceString.includes(variavel.sourceString)) {
-          object += "[\n"
-          contTab++
-          for (var c = 0; c < contTab; c++) {
-            object += "\t"
-          }
-          list.push(object);
-          content.generateCode();
-          var aux = list.pop()
-          list.push(aux.replace(",", " ").substring(0, aux.length - 1))
-          contTab--
-          var chave = "]\n"
-          for (var c = 0; c < contTab; c++) {
-            chave += "\t"
-          }
-          list.push(chave)
-        }
-        else {*/
           object += "{\n"
           contTab++
           for (var c = 0; c < contTab; c++) {
@@ -276,10 +257,6 @@ function backEnd() {
             chave += "\t"
           }
           list.push(chave)
-        //}
-        //}
-
-
       }
       else {
         var conteudo = content.generateCode();
@@ -319,7 +296,7 @@ function compile() {
 }
 
 backEnd();
-//compile();
-//semantica(resultado).compile()
+compile();
+semantica(resultado).compile()
 semantica(resultado).generateCode()
 console.log(json)
