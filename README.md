@@ -1,5 +1,7 @@
 # Projeto de Compiladores - Construção de DSL
 
+# ⚠️ XML TO JSON ⚠️
+
 # I) Sobre o projeto 📝
 
 O JX Conversor 🔄 é uma Linguagem de Domínio específico utilizada para o domínio particular de conversão entre XML (Extensible Markup Language) e JSON (Javascript Object Notation).
@@ -111,7 +113,7 @@ Pode ser informado do tipo inteiro ou fracionado, conforme mostrado abaixo:
 
 ```
 {
-    disciplinaOfertada": "true"
+    "disciplinaOfertada": true
 }
 ```
 
@@ -170,6 +172,10 @@ Abaixo iremos dar exemplo válidos das regras mencionadas acima
 
 # VI) Comportamento do Compilador 🖥️
 
+Sendo uma DSL um conversor para linguagem específica de domínio que irá otimizar algo para uma classe específica de problemas,O compilador irá gerar um código que irá remover as abstrações e, consequentemente, esse código será um código eficiente pra uso independente do fluxo que seja escolhido, sendo ele de XML para JSON como JSON para XML.
+
+O domínio é a parte mais importante da DSL, sendo necessário escolher bem o domínio do problema e deve-se implementá-lo usando uma boa estrutura do tipo de solução onde ele será aplicado. Também é importante buscar peças reutilizáveis ​​durante o desenvolvimento da solução, que serão utilizadas para geração de código de saída. Se você tiver esses bots, a transformação entre eles é mais fácil, e isso é uma vantagem do DSL. Uma DSL cria mais oportunidades para criação de novos compiladores com o aumento da produtividade de desenvolvimento com sua implementação.
+
 ## Etapas envolvidas ⏏️
 
 1. Definição da gramática 
@@ -180,7 +186,11 @@ Abaixo iremos dar exemplo válidos das regras mencionadas acima
 
 # VII) Manual
 
+Para acessar de XML para JSON, acesse o link: https://replit.com/@MatheusPinto3/projeto-compiladores-20202
 
+Para acessar de JSON para XML, acesse o link: https://replit.com/@MatheusPinto3/projeto-compiladores-json
+
+A necessidade de separação do código foi para melhor entendimento do fluxo de execução, por isso a necessidade de dois repositórios virtuais.
 
 # VIII) Informações adicionais 👍🏼
 
@@ -191,7 +201,6 @@ O editor de texto utilizado para este desenvolvimento foi o VSCode. As dificulda
 No mais, o projeto foi executado com êxito. Como projeto de código aberto, esperamos que consiga auxiliar outros desenvolvedores no seu dia-a-dia.
 
 
-                        Obrigado!
-
+                 Obrigado!
 
 ![Imagem Final é uma arte onde há um programador sentado programando encima do computador. O fundo da imagem é roxo e na tela do computador há uma estrutura que se assemelha a código](https://computerworld.com.br/wp-content/uploads/2019/11/IT-Trends-firma-parceria-com-Code-for-All.jpg.webp)
