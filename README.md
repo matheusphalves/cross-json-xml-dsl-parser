@@ -42,7 +42,129 @@ Os itens necessários para o uso dessa DSL são:
 
 ➡️ [fs](https://www.npmjs.com/package/fs)
 
-# IV) Elementos da Linguagem
+# IV) Sintaxe do JSON
+
+O dois elementos centrais da sintaxe do JSON são: _Keys_ (chaves) e _Values_ (valores).
+
+_**Keys:**_ devem ser strings (linhas), ou seja, deve conter uma sequência de caracteres entre aspas duplas.
+
+_**Values:**_ são um tipo válido de dados JSON, podem ser array, object, string, boolean, number ou null.
+
+Um objeto JSON deve iniciar e terminar obrigatoriamente com chaves {}. Como o objeto é formado aos pares (key/value), dentro deve existir um mais pares. Sendo estruturada da seguinte forma: "key":"value" conforme exemplo abaixo.
+
+```
+{
+    "disciplina":"Compiladores",
+    "periodo": 7
+}
+```
+
+## **Tipos de Valores**
+Os valores devem conter um tipo válido de dado JSON, como:
+
+## Array
+É uma coleção ordenada de valores, é esplicito com colchetes [] e cada valor dentro do array é separado por uma vírgula.
+
+Um array pode obter objetos JSON dentro, conforme é mostrado no exemplo abaixo:
+```
+"estudantes":[      
+    {"primeiroNome":"Matheus", "ultimoNome":"Pinto"},
+    {"primeiroNome":"Murilo", "ultimoNome":"Stodolni"},
+    {"primeiroNome":"Nilton", "ultimoNome":"Vieira"},
+    {"primeiroNome":"Richard", "ultimoNome":"Jeremias"}
+]
+```
+
+## Object
+Contém uma key e um value. Tem dois pontos depois de cada key e uma vírgula depois de cada value, diferenciando cada objeto. Lembrando que o último elemento não contem vírgula.
+
+Um objeto em JSON é mostrado abaixo:
+```
+"disciplina": {
+    "nome": "Compiladores",
+    "vagasDisponiveis": 20,
+    "professor": "Luis Menezes"
+}
+```
+
+## Strings
+Sequência de zeros ou mais caracteres Unicode. É colocado entre aspas duplas
+
+Exemplo abaixo:
+```
+{
+    "nomeDisciplina": "Compiladores"
+}
+```
+
+## Number
+Pode ser informado do tipo inteiro ou fracionado, conforme mostrado abaixo:
+```
+{
+    "vagasDisciplina": 20,
+    "mediaDisciplina": 9.5
+}
+```
+
+## Boolean
+É informado os valores TRUE ou FALSE:
+
+```
+{
+    disciplinaOfertada": "true"
+}
+```
+
+## Null
+Apenas informa que não existe informação.
+```
+{
+    "alunosReprovados": "null"
+}
+```
+
+# IV) Sintaxe do XML
+A documentação do XML é feita pelo site W3C (órgão responsável pela definição da linguagem XML). Iremos mostrar os principais tópicos que devem ser levados em consideração quando estamos criando um objeto XML.
+
+1. Um documento XML deve possuir raiz única.
+2. Todas as tags devem ser fechadas (elementos devem possuir tag inicial e tag final)
+3. Os nomes de elementos (tags) e atributos são sensíveis à caracteres maiúsculos e minúsculos.
+4. Nomes de tags não podem conter espaços em branco nem os caracteres !"#$%&'()*+,/;<=>?@[\]^`{|}~. Além disso, não podem começar com um número, “ . ” (ponto) ou “ - " (traço).
+
+Abaixo iremos dar exemplo válidos das regras mencionadas acima
+
+## 1. Deve possuir raiz única
+```
+<curso>
+  <disciplina>
+    <nome>Compiladores</nome>
+    <professor>Luiz Menezes</professor>
+  </disciplina>
+  <disciplina>
+    <nome>Sistema Operacional</nome>
+    <professor>José Paulo</professor>
+  </disciplina>
+</curso>
+```
+
+## 2. Todas as tags devem ser fechadas
+```
+<disciplina>
+    <nome>Compiladores</nome>
+    <professor>Luiz Menezes</professor>
+</disciplina>
+```
+
+## 3. Nomes de elementos e atributos são Case Sensitive (são sensíveis à caracteres maiúsculos e minúsculos)
+```
+<nome>Compiladores</nome>
+<Professor>Luiz Menezes</Professor>
+```
+
+## 4. Nomes de elementos e atributos são Case Sensitive (são sensíveis à caracteres maiúsculos e minúsculos)
+```
+<nomeDisciplina_1>Compiladores</nomeDisciplina_1>
+```
 
 # V) Exemplos de Códigos Fontes  🔣
 
@@ -57,6 +179,8 @@ Os itens necessários para o uso dessa DSL são:
 3. Definição do analisador semântico
 
 # VII) Manual
+
+
 
 # VIII) Informações adicionais 👍🏼
 
