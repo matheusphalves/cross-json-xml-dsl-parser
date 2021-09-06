@@ -1,6 +1,6 @@
 # Projeto de Compiladores - Construção de DSL
 
-# ⚠️ XML TO JSON ⚠️
+# ⚠️ XML TO JSON e JSON TO XML⚠️
 
 # I) Sobre o projeto 📝
 
@@ -32,8 +32,6 @@ O presente projeto propõe elaborar uma DSL (Domain Specific Language) que seja 
 
 Nome da linguagem: JX Conversor 🔄
 
-🔗 Link para o projeto no repl.it: [Clique aqui](https://www.npmjs.com/package/ohm-js)
-
 # III) Dependências ⬇️  
 
 Os itens necessários para o uso dessa DSL são:
@@ -41,8 +39,6 @@ Os itens necessários para o uso dessa DSL são:
 ➡️ [Node v12^](https://nodejs.org/ru/blog/release/v12.16.1/)
 
 ➡️ [Ohm-js](https://www.npmjs.com/package/ohm-js)
-
-➡️ [fs](https://www.npmjs.com/package/fs)
 
 # IV) Sintaxe do JSON
 
@@ -169,7 +165,215 @@ Abaixo iremos dar exemplo válidos das regras mencionadas acima
 ```
 
 # V) Exemplos de Códigos Fontes  🔣
+### 1. Exemplo de XML para JSON
+**Entrada XML:**
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+```
 
+**Saída JSON:**
+```
+{ 
+    "note": {
+        "to": "Tove",
+        "from": "Jani",
+        "heading": "Reminder",
+        "body": "Do not forget me this weekend" 
+    }
+}
+```
+### 2. Exemplo de XML para JSON
+**Entrada XML:**
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<breakfast_menu>
+<food>
+    <name>Belgian Waffles</name>
+    <price>$5.95</price>
+    <description>
+   Two of our famous Belgian Waffles with plenty of real maple syrup
+   </description>
+    <calories>650</calories>
+</food>
+<food>
+    <name>Strawberry Belgian Waffles</name>
+    <price>$7.95</price>
+    <description>
+    Light Belgian waffles covered with strawberries and whipped cream
+    </description>
+    <calories>900</calories>
+</food>
+<food>
+    <name>Berry-Berry Belgian Waffles</name>
+    <price>$8.95</price>
+    <description>
+    Belgian waffles covered with assorted fresh berries and whipped cream
+    </description>
+    <calories>900</calories>
+</food>
+<food>
+    <name>French Toast</name>
+    <price>$4.50</price>
+    <description>
+    Thick slices made from our homemade sourdough bread
+    </description>
+    <calories>600</calories>
+</food>
+<food>
+    <name>Homestyle Breakfast</name>
+    <price>$6.95</price>
+    <description>
+    Two eggs, bacon or sausage, toast, and our ever-popular hash browns
+    </description>
+    <calories>950</calories>
+</food>
+</breakfast_menu>
+```
+**Saída JSON:**
+```
+{ 
+    "breakfast_menu": {
+        "food": {
+            "name": "Belgian Waffles",
+            "price": "5.95",
+            "description": "Two of our famous Belgian Waffles with plenty of real maple syrup",
+            "calories": "650" 
+        },
+        "food": {
+            "name": "Strawberry Belgian Waffles",
+            "price": "7.95",
+            "description": "Light Belgian waffles covered with strawberries and whipped cream",
+            "calories": "900" 
+        },
+        "food": {
+            "name": "Berry-Berry Belgian Waffles",
+            "price": "8.95",
+            "description": "Belgian waffles covered with assorted fresh berries and whipped cream",
+            "calories": "900" 
+        },
+        "food": {
+            "name": "French Toast",
+            "price": "4.50",
+            "description": "Thick slices made from our homemade sourdough bread",
+            "calories": "600" 
+        },
+        "food": {
+            "name": "Homestyle Breakfast",
+            "price": "6.95",
+            "description": "Two eggs bacon or sausage toast and our ever-popular hash browns",
+            "calories": "950" 
+        }
+    }
+}
+```
+
+### 3. Exemplo de JSON para XML
+**Entrada JSON:**
+```
+{"menu": {
+  "id": "file",
+  "value": "File",
+  "popup": {
+    "menuitem": [
+      {"value": "New", "onclick": "CreateNewDoc()"},
+      {"value": "Open", "onclick": "OpenDoc()"},
+      {"value": "Close", "onclick": "CloseDoc()"}
+    ]
+  }
+}}
+```
+**Saída XML:**
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<root> 
+    <menu>
+        <id>"file"</id>
+        <value>"File"</value>
+        <popup>
+            <menuitem>
+                <element>
+                    <value>"New"</value>
+                    <onclick>"CreateNewDoc()"</onclick>
+                </element>
+                <element>
+                    <value>"Open"</value>
+                    <onclick>"OpenDoc()"</onclick>
+                    <value>"Close"</value>
+                    <onclick>"CloseDoc()"</onclick>
+                </element>
+            </menuitem>
+        </popup>
+    </menu>
+</root>
+```
+### 4. Exemplo de JSON para XML
+**Entrada JSON:**
+```
+{"widget": {
+    "debug": "on",
+    "window": {
+        "title": "Sample Konfabulator Widget",
+        "name": "main_window",
+        "width": 500,
+        "height": 500
+    },
+    "image": { 
+        "src": "Images/Sun.png",
+        "name": "sun1",
+        "hOffset": 250,
+        "vOffset": 250,
+        "alignment": "center"
+    },
+    "text": {
+        "data": "Click Here",
+        "size": 36,
+        "style": "bold",
+        "name": "text1",
+        "hOffset": 250,
+        "vOffset": 100,
+        "alignment": "center",
+        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
+    }
+}}
+```
+**Saída XML:**
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<root> 
+    <widget>
+        <debug>"on"</debug>
+        <window>
+            <title>"Sample Konfabulator Widget"</title>
+            <name>"main_window"</name>
+            <width>500</width>
+            <height>500</height>
+        </window>
+        <image>
+            <src>"Images/Sun.png"</src>
+            <name>"sun1"</name>
+            <hOffset>250</hOffset>
+            <vOffset>250</vOffset>
+            <alignment>"center"</alignment>
+        </image>
+        <text>
+            <data>"Click Here"</data>
+            <size>36</size>
+            <style>"bold"</style>
+            <name>"text1"</name>
+            <hOffset>250</hOffset>
+            <vOffset>100</vOffset>
+            <alignment>"center"</alignment>
+            <onMouseUp>"sun1.opacity = (sun1.opacity / 100) x 90;"</onMouseUp>
+        </text>
+    </widget>
+</root>
+```
 # VI) Comportamento do Compilador 🖥️
 
 Sendo uma DSL um conversor para linguagem específica de domínio que irá otimizar algo para uma classe específica de problemas,O compilador irá gerar um código que irá remover as abstrações e, consequentemente, esse código será um código eficiente pra uso independente do fluxo que seja escolhido, sendo ele de XML para JSON como JSON para XML.
@@ -200,7 +404,6 @@ O editor de texto utilizado para este desenvolvimento foi o VSCode. As dificulda
 
 No mais, o projeto foi executado com êxito. Como projeto de código aberto, esperamos que consiga auxiliar outros desenvolvedores no seu dia-a-dia.
 
-
-                 Obrigado!
+Obrigado!
 
 ![Imagem Final é uma arte onde há um programador sentado programando encima do computador. O fundo da imagem é roxo e na tela do computador há uma estrutura que se assemelha a código](https://computerworld.com.br/wp-content/uploads/2019/11/IT-Trends-firma-parceria-com-Code-for-All.jpg.webp)
